@@ -1,0 +1,24 @@
+using System.Runtime.Serialization;
+using System.Text.Json.Serialization;
+
+namespace SHL.Domain.Models.Categories
+{
+    [JsonConverter(typeof(JsonStringEnumConverter))]
+    public enum NotificationType
+    {
+        [EnumMember(Value = "INFORMATION")]
+        INFORMATION,
+        [EnumMember(Value = "UPDATE")]
+        UPDATE,
+        [EnumMember(Value = "EMAIL")]
+        EMAIL,
+        [EnumMember(Value = "SMS")]
+        SMS,
+        [EnumMember(Value = "PUSH_NOTIFICATION")]
+        PUSH_NOTIFICATION,
+        [EnumMember(Value = "IN_APP")]
+        IN_APP,
+        [EnumMember(Value = "SYSTEM")]
+        SYSTEM
+    }
+}

@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="./../JS/signalR/signalr.js"></script>
+    <script src="./../JS/signalR/signalr.min.js"></script>
+    <!-- CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- JavaScript and dependencies -->
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js"></script>
+
+    <style>
+        /* CSS for limiting height and enabling scrolling */
+        #messageSection {
+            max-height: 400px;
+            /* Set maximum height */
+            overflow-y: auto;
+            /* Enable vertical scrolling */
+        }
+    </style>
+
+    <script>
+        var userId = "2d35a1c9-06cb-49c8-91a1-722639023cd3";
+        // var userId = "badb111f-8ded-468b-90d7-6722da061ccf";
+        var rightImageUrl = "https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava2-bg.webp";
+        var leftImageUrl = "https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava1-bg.webp";
+    </script>
+
+    <script>
+
+
+
+
+
+        function RightMessageTemplate(x, image) {
+            return `
+        <div class="d-flex flex-row justify-content-end mb-4">
+                    <div class="align-self-end">
+                      <div class="p-3 me-3 border" style="border-radius: 15px; background-color: #fbfbfb;">
+                    <p class="small mb-0">${x.messageBody}</p>
+                    </div>
+                    <!-- <span class="small text-muted  relative float-end">7:00</span> -->
+                    </div>
+                    <img src=${image} alt="avatar 1" style="width: 45px; height: 100%;">
+                  </div>
+                  
+        `;
+        }
+
+
+
+        function LeftMessageTemplate(x, image) {
+            return `
+        <div class="d-flex flex-row justify-content-start mb-4">
+                    <img src=${image} alt="avatar 1" style="width: 45px; height: 100%;">
+                    <div class="p-3 ms-3" style="border-radius: 15px; background-color: rgba(57, 192, 237,.2); position: relative;">
+                      <p class="small mb-0">${x.messageBody}</p>
+                    </div>
+                </div>
+        `;
+        }
+    </script>
+</head>
+
+<body>
+
+
+
+
+    <section class="vh-100" style="background-color: #eee;">
+        <div class="container py-5">
+            <div class="row d-flex justify-content-center">
+                <div class="col-md-8 col-lg-6 col-xl-4">
+                    <div class="card" id="chat1" style="border-radius: 15px;">
+                        <div class="card-header d-flex justify-content-between align-items-center p-3 bg-info text-white border-bottom-0"
+                            style="border-top-left-radius: 15px; border-top-right-radius: 15px;">
+                            <i class="fas fa-angle-left"></i>
+                            <p class="mb-0 fw-bold">Live chat</p>
+                            <i class="fas fa-times"></i>
+                        </div>
+                        <div class="card-body" id="messageSection" style="overflow-y: auto; max-height: 400px;">
+                            <!-- Message section content will go here -->
+                        </div>
+                        <div class="input-group mb-3">
+                            <input id="messageInput" type="text" class="form-control" placeholder="TYPE A MESSAGE"
+                                aria-label="Message">
+                            <button class="btn btn-primary" onclick="send()" id="sendButton" type="button">Send</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script src="./../JS/signalR/signalr.js"></script>
+    <script src="./../JS/signalR/signalr.min.js"></script>
+    <script src="./../JS/signalR/signalRHubConnection.js"></script>
+    <script>
+        chatHubConnection.on("newMessage", (x) => {
+            // console.log("chat hub received a new message");
+            // console.log(x);
+            loadMessage(x);
+        });
+
+
+        chatHubConnection.on("ReceiveOrderInformation", (order) => {
+            console.log("order information received ",order);
+            // console.log("chat hub received a new message");
+            // console.log(x);
+            // loadMessage(x);
+        });
+
+
+        function loadMessage(x) {
+            let messageSection = document.getElementById("messageSection");
+            messageSection.innerHTML += (x.senderId == userId) ? RightMessageTemplate(x, rightImageUrl) : LeftMessageTemplate(x, leftImageUrl);
+            scrollToBottom();
+        };
+
+
+
+        // fetch("http://localhost:5135/api/Message/GetChatMessages/86b78e0c-9da2-4922-bd74-f59b8bc6e069")
+        //     .then(x => x.json())
+        //     .then(x => {
+        //         var messages = x.data;
+        //         messages.forEach(x => {
+        //             loadMessage(x);
+        //         })
+
+        //         console.log("MESSAGES LOADED SUCCESSFULLY");
+        //         scrollToBottom();
+        //     })
+
+
+        function send() {
+            var message = document.getElementById("messageInput").value;
+            document.getElementById("messageInput").value = "";
+            if (message.trim() == "") {
+                return;
+            }
+            let dto = {
+                messageBody: message
+            }
+            let messageObject = JSON.stringify(dto);
+            fetch(`http://localhost:5135/api/Message/CreateMessage/${userId}/86b78e0c-9da2-4922-bd74-f59b8bc6e069`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: messageObject
+            })
+                .then(x => x.json())
+                .then(x => {
+                    // console.log(x);
+                    scrollToBottom();
+                })
+                .catch(e => {
+                    console.error(e);
+                })
+        }
+        function scrollToBottom() {
+    let messageSection = document.getElementById("messageSection");
+    // Scroll to the bottom of the message section
+    messageSection.scrollTop = messageSection.scrollHeight;
+}
+        // Add an event listener to the document to listen for keydown events globally
+        document.addEventListener("keydown", function (event) {
+            // Check if the key pressed is the Enter key
+            if (event.key === "Enter") {
+                // Prevent the default behavior of the Enter key (e.g., form submission)
+                event.preventDefault();
+                // Call the send function when Enter is pressed
+                send();
+            }
+        });
+    </script>
+
+</body>
+
+</html>

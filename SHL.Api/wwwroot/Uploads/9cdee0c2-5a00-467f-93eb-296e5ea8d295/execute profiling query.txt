@@ -1,0 +1,1 @@
+EXEC [ShareholderLive].[dbo].[ProfileUserWithHoldings] @Email = 'tedariaga+test1@gmail.com';

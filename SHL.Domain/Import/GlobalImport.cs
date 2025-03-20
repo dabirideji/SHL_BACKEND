@@ -1,0 +1,1 @@
+global using SHL.Domain.Models.Categories;
