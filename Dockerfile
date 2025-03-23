@@ -25,10 +25,10 @@ EXPOSE 80
 COPY --from=build /app/publish .
 
 # ✅ Ensure wwwroot files are copied correctly
-COPY --from=build /src/RaaS.Api/wwwroot /app/wwwroot
+# COPY --from=build /src/RaaS.Api/wwwroot /app/wwwroot
 
 # ✅ Set correct permissions for static files
-RUN chmod -R 755 /app/wwwroot
+# RUN chmod -R 755 /app/wwwroot
 
 # Start the application
 ENTRYPOINT ["dotnet", "SHL.Api.dll"]
