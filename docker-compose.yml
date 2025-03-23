@@ -1,0 +1,44 @@
+version: '3.8'
+
+services:
+  shl_api:
+    build:
+      context: ./SHL.Api
+      dockerfile: Dockerfile
+    ports:
+      - "5001:80"
+
+  identity_server:
+    build:
+      context: ./SHL.IdentityServer.Api
+      dockerfile: Dockerfile
+    ports:
+      - "5002:80"
+
+  issuer_live:
+    build:
+      context: ./SHL.IssuerLive.Api
+      dockerfile: Dockerfile
+    ports:
+      - "5003:80"
+
+  market_community:
+    build:
+      context: ./SHL.MarketCommunity.Api
+      dockerfile: Dockerfile
+    ports:
+      - "5004:80"
+
+  nominee_portal:
+    build:
+      context: ./SHL.NomineePortal.Api
+      dockerfile: Dockerfile
+    ports:
+      - "5005:80"
+
+  shareholder_live:
+    build:
+      context: ./SHL.ShareholderLive.Api
+      dockerfile: Dockerfile
+    ports:
+      - "5006:80"
