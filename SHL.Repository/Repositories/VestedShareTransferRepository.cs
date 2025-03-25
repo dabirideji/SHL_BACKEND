@@ -14,7 +14,7 @@ namespace SHL.Repository.Repositories
 {
     public class VestedShareTransferRepository : GenericRepository<VestedShareTransfer>, IVestedShareTransferRepository
     {
-        public VestedShareTransferRepository(IUnitOfWork context, ICacheManager cacheManager) : base(context, cacheManager)
+        public VestedShareTransferRepository(IUnitOfWork context, ICacheManager cacheManager) : base(cacheManager)
         {
         }
 

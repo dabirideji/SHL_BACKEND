@@ -1,4 +1,5 @@
-﻿using SHL.Application.Interfaces.GenericRepositoryPattern;
+﻿using Microsoft.EntityFrameworkCore;
+using SHL.Application.Interfaces.GenericRepositoryPattern;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,7 +10,7 @@ namespace SHL.Repository.Repositories
 {
     public class BrokerRepository : GenericRepository<Broker>, IBrokerRepository
     {
-        public BrokerRepository(IUnitOfWork context, ICacheManager cacheManager) : base(context, cacheManager)
+        public BrokerRepository(IUnitOfWork context, ICacheManager cacheManager) : base(cacheManager)
         {
         }
     }

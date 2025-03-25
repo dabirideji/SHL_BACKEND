@@ -41,7 +41,7 @@ namespace SHL.Repository.Repositories
             SHLMasterDbContext SHLMasterDbContext,
             IDbConnectionAccessor dbConnectionAccessor,
             IDbContextFactory dbContextFactory,
-            IMailService mailService) : base(context, cacheManager)
+            IMailService mailService) : base(cacheManager)
         {
             this.jwtOptions = jwtOptions.Value;
             this.userManager = userManager;

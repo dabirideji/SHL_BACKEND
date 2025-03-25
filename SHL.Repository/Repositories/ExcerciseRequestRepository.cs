@@ -1,4 +1,5 @@
-﻿using SHL.Application.Interfaces.GenericRepositoryPattern;
+﻿using Microsoft.EntityFrameworkCore;
+using SHL.Application.Interfaces.GenericRepositoryPattern;
 using SHL.Domain.Models;
 using System;
 using System.Collections.Generic;
@@ -10,7 +11,7 @@ namespace SHL.Repository.Repositories
 {
     public class ExcerciseRequestRepository : GenericRepository<ExcerciseRequest>, IExcerciseRequestRepository
     {
-        public ExcerciseRequestRepository(IUnitOfWork context, ICacheManager cacheManager) : base(context, cacheManager)
+        public ExcerciseRequestRepository(IUnitOfWork context, ICacheManager cacheManager) : base(cacheManager)
         {
         }
     }

@@ -10,7 +10,7 @@ namespace SHL.Repository.Repositories
 {
     public class TransactionHistoryRepository : GenericRepository<TransactionHistory>, ITransactionHistoryRepository
     {
-        public TransactionHistoryRepository(SHLTennantDbContext context, ICacheManager cacheManager) : base(context, cacheManager)
+        public TransactionHistoryRepository(SHLTennantDbContext context, ICacheManager cacheManager) : base(cacheManager)
         {
         }
 

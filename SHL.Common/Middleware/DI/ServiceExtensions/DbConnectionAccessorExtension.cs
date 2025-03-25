@@ -1,5 +1,4 @@
-using SHL.Application.Interfaces;
-using SHL.Repository;
+
 
 public static class DbConnectionAccessorExtension
 {

@@ -1,6 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SHL.Repository.Data.Context;
-using System;
 
 namespace SHL.Api.Middleware
 {

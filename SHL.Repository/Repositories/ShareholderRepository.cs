@@ -12,7 +12,7 @@ namespace SHL.Repository.Repositories
 {
     public class ShareholderRepository : GenericRepository<Shareholder>, IShareholderRepository
     {
-        public ShareholderRepository(IUnitOfWork context, ICacheManager cacheManager) : base(context, cacheManager)
+        public ShareholderRepository(IUnitOfWork context, ICacheManager cacheManager) : base(cacheManager)
         {
         }
 

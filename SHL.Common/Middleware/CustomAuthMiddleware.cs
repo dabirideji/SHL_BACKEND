@@ -1,5 +1,4 @@
 ﻿using System.Net;
-using SHL.Application.CustomExceptions;
 public class CustomAuthenticationMiddleware
 {
     private readonly RequestDelegate _next;
