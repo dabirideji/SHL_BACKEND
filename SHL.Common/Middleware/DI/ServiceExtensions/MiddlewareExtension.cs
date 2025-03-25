@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.OData;
 using SHL.Api.Middleware;
 
@@ -25,7 +26,7 @@ public static class MiddlewareExtensions
         app.UseMiddleware<CustomAuthenticationMiddleware>();
         
         app.UseStaticFiles();
-        app.UseODataRouteDebug();
+        app.UseODataRouteDebug ();
         app.UseODataBatching();
         app.UseRouting();
         app.UseAuthentication();

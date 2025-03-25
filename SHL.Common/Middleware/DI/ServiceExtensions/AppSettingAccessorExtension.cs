@@ -1,5 +1,4 @@
-using SHL.Application.Interfaces;
-using SHL.Application.Services;
+
 
 public static class AppSettingAccessorExtension
 {

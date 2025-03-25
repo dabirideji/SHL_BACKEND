@@ -6,7 +6,7 @@ namespace SHL.Repository.Repositories
 {
     public class OfferRepository : GenericRepository<Offer>, IOfferRepository
     {
-        public OfferRepository(SHLTennantDbContext context, ICacheManager cacheManager) : base(context, cacheManager)
+        public OfferRepository(ICacheManager cacheManager) : base(cacheManager)
         {
         }
 

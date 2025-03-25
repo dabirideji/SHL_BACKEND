@@ -12,8 +12,8 @@ namespace SHL.Api.EntryPoint
         public void ConfigureServices(IServiceCollection services)
         {
             
-        SHL.Common.DI.Middleware.CompilerExtensionForAllDependencies.BuildAndRegisterAllDependency(services,_configuration);
-
+            
+             SHL.Common.DI.Middleware.CompilerExtensionForAllDependencies.BuildAndRegisterAllDependency(services,_configuration);
         }
 
         public void Configure(WebApplication app)

@@ -5,6 +5,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using SHL.Application.Interfaces;
 using SHL.Application.IServices;
+using SHL.Domain.Models.Categories;
 
 public class DbContextFactory : IDbContextFactory
 {
@@ -108,5 +109,10 @@ public class DbContextFactory : IDbContextFactory
             return connectionstring;
         }
 
+    }
+
+    public DbContext CreateDbContext(DatabaseContextType contextType, string clientId = "", DatabaseType databaseType = DatabaseType.SQL_SERVER)
+    {
+        throw new NotImplementedException();
     }
 }

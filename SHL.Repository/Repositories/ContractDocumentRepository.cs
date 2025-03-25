@@ -1,4 +1,5 @@
-﻿using SHL.Application.Interfaces.GenericRepositoryPattern;
+﻿using Microsoft.EntityFrameworkCore;
+using SHL.Application.Interfaces.GenericRepositoryPattern;
 using SHL.Domain.Models;
 using System;
 using System.Collections.Generic;
@@ -11,7 +12,7 @@ namespace SHL.Repository.Repositories
 {
     public class ContractDocumentRepository : GenericRepository<ContractDocument>, IContractDocumentRepository
     {
-        public ContractDocumentRepository(IUnitOfWork context, ICacheManager cacheManager) : base(context, cacheManager)
+        public ContractDocumentRepository(IUnitOfWork context, ICacheManager cacheManager) : base(cacheManager)
         {
         }
     }

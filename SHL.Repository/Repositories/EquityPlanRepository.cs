@@ -9,7 +9,7 @@ namespace SHL.Repository.Repositories
 {
     public class EquityPlanRepository : GenericRepository<EquityPlan>, IEquityPlanRepository
     {
-        public EquityPlanRepository(SHLTennantDbContext context, ICacheManager cacheManager) : base(context, cacheManager)
+        public EquityPlanRepository(ICacheManager cacheManager) : base(cacheManager)
         {
         }
     }

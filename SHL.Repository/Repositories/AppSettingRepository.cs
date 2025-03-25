@@ -1,4 +1,5 @@
-﻿using SHL.Application.DTO.AppSetting;
+﻿using Microsoft.EntityFrameworkCore;
+using SHL.Application.DTO.AppSetting;
 using SHL.Application.Interfaces.GenericRepositoryPattern;
 using SHL.Domain.Models;
 using System;
@@ -11,7 +12,7 @@ namespace SHL.Repository.Repositories
 {
     public class AppSettingRepository : GenericRepository<AppSetting>, IAppSettingRepository
     {
-        public AppSettingRepository(IUnitOfWork context, ICacheManager cacheManager) : base(context, cacheManager)
+        public AppSettingRepository(IUnitOfWork context, ICacheManager cacheManager) : base(cacheManager)
         {
         }
 

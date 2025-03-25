@@ -2,7 +2,6 @@ using Serilog.Context;
 
 namespace SHL.Api.Middleware
 {
-
     public class TenantLoggingMiddleware
     {
         private readonly RequestDelegate _next;

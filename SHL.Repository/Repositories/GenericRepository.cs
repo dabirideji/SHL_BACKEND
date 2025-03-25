@@ -1,6 +1,7 @@
 
 using System.Data.Entity.Core.Metadata.Edm;
 using System.Linq.Expressions;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SHL.Application.IManagers;
 using SHL.Application.Interfaces.GenericRepositoryPattern;
@@ -11,15 +12,17 @@ namespace SHL.Repository.Repositories.GenericRepositoryImplementations
     public class GenericRepository<T> : IGenericRepository<T> where T : class
     {
         private readonly ICacheManager _cacheManager;
-        public readonly IUnitOfWork _context;
+        public readonly DbContext _context;
         public readonly DbSet<T> _dbSet;
 
-        public GenericRepository(IUnitOfWork context, ICacheManager cacheManager)
+        public GenericRepository(ICacheManager cacheManager)
         {
-            _context = context;
+            
             _cacheManager = cacheManager;
             _dbSet = _context.Set<T>();
         }
+
+       
 
         public async Task<T> AddAsync(T entity)
         {

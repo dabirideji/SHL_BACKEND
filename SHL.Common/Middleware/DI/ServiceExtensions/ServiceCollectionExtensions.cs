@@ -1,9 +1,5 @@
 using InventoryManagement.Application.Services.Customer;
 using SHL.Application.Interface.Jwt;
-using SHL.Application.Interfaces;
-using SHL.Application.Services;
-
-
 
 public static class ServiceCollectionExtensions
 {

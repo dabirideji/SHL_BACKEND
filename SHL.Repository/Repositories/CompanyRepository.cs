@@ -12,7 +12,7 @@ namespace SHL.Repository.Repositories
 {
     public class CompanyRepository : GenericRepository<Company>, ICompanyRepository
     {
-        public CompanyRepository(SHLTennantDbContext context, ICacheManager cacheManager) : base(context, cacheManager)
+        public CompanyRepository(ICacheManager cacheManager) : base(cacheManager)
         {
         }
     }

@@ -1,0 +1,14 @@
+global using Microsoft.Extensions.DependencyInjection;
+global using SHL.Application.Interfaces;
+global using SHL.Application.Services;
+global using SHL.Application.CustomExceptions;
+global using Microsoft.Extensions.Configuration;
+global using SHL.Infrastructure;
+global using SHL.Application;
+global using SHL.Repository;
+global using SHL.Application.IRepository;
+global using SHL.Repository.Repository;
+global using Microsoft.AspNetCore.Http;
+global using Microsoft.AspNetCore.Builder;
+global using Microsoft.Extensions.Logging;
+global using Hangfire;

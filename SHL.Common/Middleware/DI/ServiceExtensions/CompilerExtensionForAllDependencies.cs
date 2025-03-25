@@ -1,12 +1,9 @@
 
-using SHL.Repository;
-using SHL.Api;
-using SHL.Api.BackgroundServices;
-using SHL.Api.Middleware.DI.ServiceExtensions;
-using SHL.Application;
-using SHL.Application.AppSettings;
-using SHL.Infrastructure;
 
+using SHL.Api.Middleware.DI.ServiceExtensions;
+using SHL.Application.AppSettings;
+
+namespace SHL.Common.DI.Middleware;
 public static class CompilerExtensionForAllDependencies
 {
     public static IServiceCollection BuildAndRegisterAllDependency(this IServiceCollection services, IConfiguration configuration)
@@ -35,9 +32,9 @@ public static class CompilerExtensionForAllDependencies
             .AddInfrastructureService();
 
 
-        services.AddHostedService<CreateStaffFromOfferBackgroundService>();
-        services.AddHostedService<EmailBackgroundService>();
-        services.AddHostedService<BulkCreateEmployeeBackgroundService>();
+        // services.AddHostedService<CreateStaffFromOfferBackgroundService>();
+        // services.AddHostedService<EmailBackgroundService>();
+        // services.AddHostedService<BulkCreateEmployeeBackgroundService>();
 
         #region BASIC SETUP
         services.Configure<JwtOptions>(configuration.GetSection("JWTCredentials"));
@@ -68,13 +65,13 @@ public static class CompilerExtensionForAllDependencies
         #endregion
 
         #region Authorization
-        services.AddAuthorization(opt =>
-        {
-            opt.AddPolicy(SHLAuthorizationPolicy.Employer, policy => policy.RequireRole("Employer"));
-            opt.AddPolicy(SHLAuthorizationPolicy.Employee, policy => policy.RequireRole("Employee"));
-            opt.AddPolicy(SHLAuthorizationPolicy.All, policy => policy.RequireRole("Employee", "Employer"));
+        // services.AddAuthorization(opt =>
+        // {
+        //     opt.AddPolicy(SHLAuthorizationPolicy.Employer, policy => policy.RequireRole("Employer"));
+        //     opt.AddPolicy(SHLAuthorizationPolicy.Employee, policy => policy.RequireRole("Employee"));
+        //     opt.AddPolicy(SHLAuthorizationPolicy.All, policy => policy.RequireRole("Employee", "Employer"));
             
-        });
+        // });
         #endregion
 
         #region CORS POLICIES
