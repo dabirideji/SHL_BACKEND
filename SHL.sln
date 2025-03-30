@@ -25,6 +25,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SHL.NomineePortal.Api", "SH
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SHL.MarketCommunity.Api", "SHL.MarketCommunity.Api\SHL.MarketCommunity.Api.csproj", "{2144A7FE-642F-47BD-94E8-EE119347C564}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SHL.Models", "SHL.Models\SHL.Models.csproj", "{8B9D085B-94E3-4A3E-86EF-E8A27147716B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -98,6 +100,12 @@ Global
 		{2144A7FE-642F-47BD-94E8-EE119347C564}.Migration|Any CPU.Build.0 = Debug|Any CPU
 		{2144A7FE-642F-47BD-94E8-EE119347C564}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2144A7FE-642F-47BD-94E8-EE119347C564}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8B9D085B-94E3-4A3E-86EF-E8A27147716B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8B9D085B-94E3-4A3E-86EF-E8A27147716B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8B9D085B-94E3-4A3E-86EF-E8A27147716B}.Migration|Any CPU.ActiveCfg = Debug|Any CPU
+		{8B9D085B-94E3-4A3E-86EF-E8A27147716B}.Migration|Any CPU.Build.0 = Debug|Any CPU
+		{8B9D085B-94E3-4A3E-86EF-E8A27147716B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8B9D085B-94E3-4A3E-86EF-E8A27147716B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
