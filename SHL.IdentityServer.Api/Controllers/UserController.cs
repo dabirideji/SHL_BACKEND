@@ -31,7 +31,7 @@ namespace SHL.IdentityServer.Api.Controllers
         public async ValueTask<IActionResult> ForgotPassword(string email)
         {
             var result = await userOnboardingService.ForgotPasswordAsync(email);
-            return Ok(result);
+            return Ok(result); 
         }
         [HttpPost("ResetPassword")]
         public async ValueTask<IActionResult> ResetPassword([FromBody] ResetPasswordDTO userDTO)

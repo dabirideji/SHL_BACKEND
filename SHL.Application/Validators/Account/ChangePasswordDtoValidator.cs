@@ -13,8 +13,8 @@ namespace SHL.Application.Validators.Account
 {
     public class ChangePasswordDtoValidator : AbstractValidator<ChangePasswordDto>
     {
-        public ChangePasswordDtoValidator(UserManager<CompanyUser> userManager,
-            IPasswordValidator<CompanyUser> passwordValidator,
+        public ChangePasswordDtoValidator(UserManager<ApplicationUser> userManager,
+            IPasswordValidator<ApplicationUser> passwordValidator,
             IUserIdentityService userIdentityService)
         {
             RuleFor(c => c.CurrentPassword)
@@ -31,7 +31,7 @@ namespace SHL.Application.Validators.Account
             RuleFor(c => c)
                .CustomAsync(async (model, context, ct) =>
                {
-                   var user = new CompanyUser
+                   var user = new ApplicationUser
                    {
                        UserName = userIdentityService.EmailAddress,
                        Email = userIdentityService.EmailAddress

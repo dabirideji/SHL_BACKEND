@@ -15,13 +15,13 @@ namespace SHL.Application.CQRS
     class ChangeStaffStatusCommandHandler : IRequestHandler<ChangeStaffStatusCommand>
     {
         private readonly IValidator<ChangeStaffStatusDto> validator;
-        private readonly ICompanyUserRepository companyUserRepository;
+        private readonly IApplicationUserRepository ApplicationUserRepository;
 
         public ChangeStaffStatusCommandHandler(IValidator<ChangeStaffStatusDto> validator,
-            ICompanyUserRepository companyUserRepository)
+            IApplicationUserRepository ApplicationUserRepository)
         {
             this.validator = validator;
-            this.companyUserRepository = companyUserRepository;
+            this.ApplicationUserRepository = ApplicationUserRepository;
         }
         public async Task Handle(ChangeStaffStatusCommand request, CancellationToken cancellationToken)
         {
@@ -29,7 +29,7 @@ namespace SHL.Application.CQRS
             if (validatorResult.Errors.Count > 0)
                 throw new FluentValidation.ValidationException(validatorResult.Errors);
 
-            var result = await companyUserRepository.ChangeStaffStatusAsync(request.Dto.EmailAddress, request.Dto.Status, cancellationToken);
+            var result = await ApplicationUserRepository.ChangeStaffStatusAsync(request.Dto.EmailAddress, request.Dto.Status, cancellationToken);
             if (!result.Succeeded)
             {
                 var errors = new List<ValidationFailure>();

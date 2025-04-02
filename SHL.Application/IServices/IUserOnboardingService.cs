@@ -15,7 +15,7 @@ namespace SHL.Application.IServices
 {
     public interface IUserOnboardingService
     {
-        ValueTask<DefaultResponse<UserResponseDTO>> CreateUserAsync(CreateUserDTO userModel);
+        ValueTask<UserResponseDTO> CreateUserAsync(CreateUserDTO userModel);
         ValueTask<DefaultResponse<UserResponseDTO>> UpdateUserAsync(UpdateUserDTO userModel);
         ValueTask<ApplicationUser> GetUserByIdAsync(string UserId);
         ValueTask<DefaultResponse<UserResponseDTO>> UserLoginAsync(LoginDTO userModel);

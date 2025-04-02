@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
+using SHL.Application.CustomExceptions;
 using SHL.Application.DTO.Identity;
 using SHL.Application.IServices;
 using SHL.Application.Response;
@@ -37,19 +38,8 @@ namespace SHL.Infrastructure.Services
             this.tokenServices = tokenServices;
         }
 
-        public async ValueTask<DefaultResponse<UserResponseDTO>> CreateUserAsync(CreateUserDTO userModel)
+        public async ValueTask<UserResponseDTO> CreateUserAsync(CreateUserDTO userModel)
         {
-            try
-            {
-            if (userModel == null)
-            {
-                return new DefaultResponse<UserResponseDTO>
-                {
-                     ResponseCode ="404",
-                     ResponseMessage="Invalid Model",
-                     Status=false,
-                };
-            }
             string email=string.Empty; string phonenumber=string.Empty;
             var fetchEmailOrPhone= EstractEmailOrPhoneNumber(userModel.EmailOrPhoneNumber);
             if (fetchEmailOrPhone == "Email") {email = userModel.EmailOrPhoneNumber;} else {phonenumber=userModel.EmailOrPhoneNumber.ToString();}
@@ -57,35 +47,28 @@ namespace SHL.Infrastructure.Services
             {
                 UserName=userModel.EmailOrPhoneNumber,
                 Email=email,
-                PhoneNumber = "234" + phonenumber.Substring(1, 10),
+                //PhoneNumber = "234" + phonenumber.Substring(1, 10),
                 CompanyId=userModel.CompanyId,
                 IsAdmin=userModel.IsAdmin,
             };
             var result = await userManager.CreateAsync(user, userModel.EmailOrPhoneNumber);
-            if (result.Succeeded)
+            if (result.Succeeded==false)
+            {
+            ApiException.ClientError("FAILED TO CREATE USER", 400, new {result});
+            return null;
+            }
+            else
             {
                 var otp = await userManager.GenerateTwoFactorTokenAsync(user, AppTokenProvider.TotpProvider);
                 //send OTP
-                await emailService.SendMail(user.Email,otp,"SHL OTP");
+                await emailService.SendMail(user.Email, otp, "SHL OTP");
 
                 var userData = await UserResponses(user);
-                return new DefaultResponse<UserResponseDTO>
-                {
-                    ResponseCode = "200",
-                    ResponseMessage = "Successfully Created",
-                    Status = true,
-                    Data = userData
-                };
-
+                return userData;
             }
-              return new DefaultResponse<UserResponseDTO> { Status = false, ResponseMessage = "Failed to create user", Errors = result.Errors.Select(e => e.Description).ToList() };
-            }
-            catch (Exception ex)
-            {
-                return new DefaultResponse<UserResponseDTO>{ResponseCode = "500",ResponseMessage = ex.Message,Status = false };
-            }
-
+              //return new DefaultResponse<UserResponseDTO> { Status = false, ResponseMessage = "Failed to create user", Errors = result.Errors.Select(e => e.Description).ToList() };
         }
+
         public async ValueTask<DefaultResponse<UserResponseDTO>> UserLoginAsync(LoginDTO userModel)
         {
             try
@@ -148,7 +131,7 @@ namespace SHL.Infrastructure.Services
             try
             {
 
-                var user = await userManager.FindByIdAsync(userIdentityService.SubjectId);
+                var user = await userManager.FindByIdAsync(userIdentityService.SubjectId.ToString());
                 if (user == null)
                 {
                     return DefaultResponse<UserResponseDTO>.ErrorMessage("Unable to retrieve user data. Try again later.");
@@ -185,7 +168,7 @@ namespace SHL.Infrastructure.Services
         }
         public async ValueTask<DefaultResponse<bool>> VerifyOtp(string otp)
         {
-            var user = await userManager.FindByIdAsync(userIdentityService.SubjectId);
+            var user = await userManager.FindByIdAsync(userIdentityService.SubjectId.ToString());
             var result = await userManager.VerifyTwoFactorTokenAsync(user, AppTokenProvider.TotpProvider, otp);
             if (result)
             {

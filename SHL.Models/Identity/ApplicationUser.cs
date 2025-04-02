@@ -26,7 +26,7 @@ namespace CSL.Models.Identity
         public string LastComputerName { get; set; }
 
 
-        public virtual ICollection<UserDevice> UserDevices { get; set; }
+        public virtual ICollection<UserDevice>? UserDevices { get; set; }
 
     }
 

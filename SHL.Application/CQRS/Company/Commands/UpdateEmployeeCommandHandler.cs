@@ -34,7 +34,7 @@ namespace SHL.Application.CQRS.Company.Commands
 
             var userId = await staffRepository.UpdateStaffInfoAsync(request.Dto, cancellationToken);
 
-            var staff = await staffRepository.Get(u => u.CompanyUserId == userId)
+            var staff = await staffRepository.Get(u => u.Id.ToString() == userId)
                 .Include(b => b.Bank)
                 .FirstOrDefaultAsync();
 
@@ -48,7 +48,7 @@ namespace SHL.Application.CQRS.Company.Commands
                         BankName = request.Dto.BankName ?? ""
                     },
                     ChnNumber = request.Dto.ChnNumber,
-                    CompanyUserId = userId,
+                    Id = Guid.NewGuid(),
                     CompanyId = userIdentityService.CompanyId,
                     CscsNumber = request.Dto.CscsNumber,
                     StaffDepartment = request.Dto.StaffDepartment,

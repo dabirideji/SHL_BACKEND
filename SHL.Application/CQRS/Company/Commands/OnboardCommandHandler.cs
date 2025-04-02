@@ -16,15 +16,15 @@ namespace SHL.Application.CQRS.Company.Commands
     class OnboardCommandHandler : IRequestHandler<OnboardCommand>
     {
         private readonly IValidator<OnboardDto> validator;
-        private readonly ICompanyUserRepository companyUserRepository;
+        private readonly IApplicationUserRepository ApplicationUserRepository;
         private readonly IMailService mailService;
 
         public OnboardCommandHandler(IValidator<OnboardDto> validator,
-            ICompanyUserRepository companyUserRepository,
+            IApplicationUserRepository ApplicationUserRepository,
             IMailService mailService)
         {
             this.validator = validator;
-            this.companyUserRepository = companyUserRepository;
+            this.ApplicationUserRepository = ApplicationUserRepository;
             this.mailService = mailService;
         }
         public async Task Handle(OnboardCommand request, CancellationToken cancellationToken)
@@ -33,7 +33,7 @@ namespace SHL.Application.CQRS.Company.Commands
             if (validatorResult.Errors.Count > 0)
                 throw new FluentValidation.ValidationException(validatorResult.Errors);
 
-            var onboardingResult = await companyUserRepository.OnboardAsync(request.Dto);
+            var onboardingResult = await ApplicationUserRepository.OnboardAsync(request.Dto);
             if (!onboardingResult.Succeeded)
             {
                 var errors = new List<ValidationFailure>();
@@ -45,7 +45,7 @@ namespace SHL.Application.CQRS.Company.Commands
                 throw new ValidationException(errors);
             }
 
-            var otp = await companyUserRepository.GenerateOtpAsync(request.Dto.CompanyEmail, "verify_email");
+            var otp = await ApplicationUserRepository.GenerateOtpAsync(request.Dto.CompanyEmail, "verify_email");
             _ = await mailService.SendMail(request.Dto.CompanyEmail, $"Your email verification OTP is {otp.Item2}. It expires in 5 min", "Verify your email");
         }
     }

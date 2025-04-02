@@ -14,22 +14,22 @@ namespace SHL.Application.CQRS.Account.Commands
     public record ForgotPasswordCommand(string EmailAddress) : IRequest;
     class ForgotPasswordCommandHandler : IRequestHandler<ForgotPasswordCommand>
     {
-        private readonly ICompanyUserRepository companyUserRepository;
-        private readonly UserManager<CompanyUser> userManager;
+        private readonly IApplicationUserRepository ApplicationUserRepository;
+        private readonly UserManager<ApplicationUser> userManager;
         private readonly IMailService mailService;
 
-        public ForgotPasswordCommandHandler(ICompanyUserRepository companyUserRepository,
-            UserManager<Domain.Models.CompanyUser> userManager,
+        public ForgotPasswordCommandHandler(IApplicationUserRepository ApplicationUserRepository,
+            UserManager<ApplicationUser> userManager,
             IMailService mailService)
         {
-            this.companyUserRepository = companyUserRepository;
+            this.ApplicationUserRepository = ApplicationUserRepository;
             this.userManager = userManager;
             this.mailService = mailService;
         }
         public async Task Handle(ForgotPasswordCommand request, CancellationToken cancellationToken)
         {
 
-            (IdentityResult result, string token) result = await companyUserRepository.GeneratePasswordResetTokenAsync(request.EmailAddress, cancellationToken);
+            (IdentityResult result, string token) result = await ApplicationUserRepository.GeneratePasswordResetTokenAsync(request.EmailAddress, cancellationToken);
             if (result.result.Succeeded)
             {
                 var changePasswordUrl = $"email={request.EmailAddress}&token={result.token}";

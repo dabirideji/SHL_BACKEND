@@ -15,13 +15,13 @@ namespace SHL.Application.CQRS.Account.Commands
     class EmployeeInfoUpdateCommandHandler : IRequestHandler<EmployeeInfoUpdateCommand>
     {
         private readonly IValidator<EmployeeInfoUpdateDto> validator;
-        private readonly ICompanyUserRepository companyUserRepository;
+        private readonly IApplicationUserRepository ApplicationUserRepository;
 
         public EmployeeInfoUpdateCommandHandler(IValidator<EmployeeInfoUpdateDto> validator,
-            ICompanyUserRepository companyUserRepository)
+            IApplicationUserRepository ApplicationUserRepository)
         {
             this.validator = validator;
-            this.companyUserRepository = companyUserRepository;
+            this.ApplicationUserRepository = ApplicationUserRepository;
         }
         public async Task Handle(EmployeeInfoUpdateCommand request, CancellationToken cancellationToken)
         {
@@ -29,7 +29,7 @@ namespace SHL.Application.CQRS.Account.Commands
             if (validatorResult.Errors.Count > 0)
                 throw new FluentValidation.ValidationException(validatorResult.Errors);
 
-            var result = await companyUserRepository.UpdateEmployeeProfile(request.Dto, cancellationToken);
+            var result = await ApplicationUserRepository.UpdateEmployeeProfile(request.Dto, cancellationToken);
             if (!result.Succeeded)
             {
                 var errors = new List<ValidationFailure>();

@@ -17,7 +17,7 @@ public static class RepositoryExtensions
         services.AddScoped<IBrokerRepository, BrokerRepository>();
         services.AddScoped<ICompanyDepartmentRepository, CompanyDepartmentRepository>();
         services.AddScoped<ICompanyRepository, CompanyRepository>();
-        services.AddScoped<ICompanyUserRepository, CompanyUserRepository>();
+        //services.AddScoped<ICompanyUserRepository, CompanyUserRepository>();
         services.AddScoped<IContractDocumentRepository, ContractDocumentRepository>();
         services.AddScoped<IDividendPayoutRequestRepository, DividendPayoutRequestRepository>();
         services.AddScoped<IDividendRepository, DividendRepository>();
@@ -33,6 +33,7 @@ public static class RepositoryExtensions
         services.AddScoped<ITransactionHistoryRepository, TransactionHistoryRepository>();
         services.AddScoped<IVestedShareTransferRepository, VestedShareTransferRepository>();
         services.AddScoped<IAppSettingRepository, AppSettingRepository>();
+        services.AddScoped<IApplicationUserRepository, ApplicationUserRepository>();
 
         return services;
     }

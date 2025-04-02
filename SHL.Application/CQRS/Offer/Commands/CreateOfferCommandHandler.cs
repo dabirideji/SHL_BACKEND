@@ -23,21 +23,21 @@ namespace SHL.Application.CQRS.Offer.Commands
         private readonly IOfferRepository offerRepository;
         private readonly IUnitOfWork unitOfWork;
         private readonly IOfferEmailChannel offerEmailChannel;
-        private readonly ICompanyUserRepository companyUserRepository;
+        private readonly IApplicationUserRepository ApplicationUserRepository;
 
         public CreateOfferCommandHandler(IValidator<CreateOfferDto> validator,
             IEquityPlanRepository equityPlanRepository,
             IOfferRepository offerRepository,
             IUnitOfWork unitOfWork,
             IOfferEmailChannel offerEmailChannel,
-            ICompanyUserRepository companyUserRepository)
+            IApplicationUserRepository ApplicationUserRepository)
         {
             this.validator = validator;
             this.equityPlanRepository = equityPlanRepository;
             this.offerRepository = offerRepository;
             this.unitOfWork = unitOfWork;
             this.offerEmailChannel = offerEmailChannel;
-            this.companyUserRepository = companyUserRepository;
+            this.ApplicationUserRepository = ApplicationUserRepository;
         }
         public async Task Handle(CreateOfferCommand request, CancellationToken cancellationToken)
         {
@@ -46,7 +46,7 @@ namespace SHL.Application.CQRS.Offer.Commands
                 throw new FluentValidation.ValidationException(validatorResult.Errors);
 
             var equityPlan = await equityPlanRepository.GetByIdAsync(request.Dto.EquityPlanId);
-            var users = await companyUserRepository.Get(u => request.Dto.EmailAddresses.Contains(u.Email!))
+            var users = await ApplicationUserRepository.Get(u => request.Dto.EmailAddresses.Contains(u.Email!))
                 .ToListAsync();
 
             var proposedOffers = request.Dto.EmailAddresses.Select(e => new Models.OfferExcelModel
@@ -78,7 +78,7 @@ namespace SHL.Application.CQRS.Offer.Commands
         }
 
 
-        string GetName(List<CompanyUser> users, string emailAddress)
+        string GetName(List<ApplicationUser> users, string emailAddress)
         {
             var user = users.FirstOrDefault(u => u.NormalizedEmail == emailAddress.ToUpperInvariant());
 

@@ -17,19 +17,19 @@ namespace InventoryManagement.Application.Services.Customer
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
         private readonly IContactService _contactService;
-        private readonly UserManager<CompanyUser> userManager;
-        private readonly ICompanyUserRepository companyUserRepository;
+        private readonly UserManager<ApplicationUser> userManager;
+        private readonly IApplicationUserRepository ApplicationUserRepository;
         private readonly ICompanyRepository companyRepository;
 
         public StaffService(IUnitOfWork unitOfWork, IMapper mapper, IContactService contactService,
-            UserManager<CompanyUser> userManager,
-            ICompanyUserRepository companyUserRepository,
+            UserManager<ApplicationUser> userManager,
+            IApplicationUserRepository ApplicationUserRepository,
             ICompanyRepository companyRepository) : base(unitOfWork, mapper)
         {
             _mapper = mapper;
             this._contactService = contactService;
             this.userManager = userManager;
-            this.companyUserRepository = companyUserRepository;
+            this.ApplicationUserRepository = ApplicationUserRepository;
             this.companyRepository = companyRepository;
             _unitOfWork = unitOfWork;
         }
@@ -61,10 +61,10 @@ namespace InventoryManagement.Application.Services.Customer
                 return default;
             }
 
-            if (!string.Equals( user.StaffStatus, StaffStatus.ACTIVE.ToString(),StringComparison.OrdinalIgnoreCase))
-            {
-                ApiException.ClientError("user is not active, kindly contact your administrator");                
-            }
+            //if (!string.Equals( user., StaffStatus.ACTIVE.ToString(),StringComparison.OrdinalIgnoreCase))
+            //{
+            //    ApiException.ClientError("user is not active, kindly contact your administrator");                
+            //}
                 var isValid = await userManager.CheckPasswordAsync(user!, password);
             if (!isValid) ApiException.ClientError("Invalid Credentials");
 
@@ -75,7 +75,7 @@ namespace InventoryManagement.Application.Services.Customer
                 claims.Add(new Claim(ClaimTypes.Role, role));
             }
 
-            var accessToken = companyUserRepository.GenerateToken(user!, claims);
+            var accessToken = ApplicationUserRepository.GenerateToken(user!, claims);
             var companyId = claims!.First(c => c.Type == "companyid");
             var companyInfo = await companyRepository.GetByIdAsync(Guid.Parse(companyId.Value));
 

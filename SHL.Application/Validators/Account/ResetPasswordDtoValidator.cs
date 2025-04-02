@@ -1,4 +1,5 @@
-﻿using FluentValidation;
+﻿using CSL.Models.Identity;
+using FluentValidation;
 using Microsoft.AspNetCore.Identity;
 using SHL.Application.DTO.Account;
 using SHL.Domain.Models;
@@ -12,8 +13,8 @@ namespace SHL.Application.Validators.Account
 {
    public class ResetPasswordDtoValidator:AbstractValidator<ResetPasswordDto>
     {
-        public ResetPasswordDtoValidator(UserManager<CompanyUser> userManager,
-            IPasswordValidator<CompanyUser> passwordValidator)
+        public ResetPasswordDtoValidator(UserManager<ApplicationUser> userManager,
+            IPasswordValidator<ApplicationUser> passwordValidator)
         {
             RuleFor(c => c.Token)
                 .NotEmpty();
@@ -33,7 +34,7 @@ namespace SHL.Application.Validators.Account
             RuleFor(c => c)
                 .CustomAsync(async (model, context, ct) =>
                 {
-                    var user = new CompanyUser
+                    var user = new ApplicationUser
                     {
                         UserName = model.EmailAddress,
                         Email = model.EmailAddress

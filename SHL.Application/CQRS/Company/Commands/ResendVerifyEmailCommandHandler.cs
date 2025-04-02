@@ -1,4 +1,5 @@
-﻿using FluentValidation;
+﻿
+using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 using SHL.Application.DTO.Company;
@@ -17,18 +18,18 @@ namespace SHL.Application.CQRS.Company.Commands
     class ResendVerifyEmailCommandHandler : IRequestHandler<ResendVerifyEmailCommand>
     {
         private readonly IValidator<ResendVerifyEmailDto> validator;
-        private readonly UserManager<CompanyUser> userManager;
-        private readonly ICompanyUserRepository companyUserRepository;
+        private readonly UserManager<ApplicationUser> userManager;
+        private readonly IApplicationUserRepository ApplicationUserRepository;
         private readonly IMailService mailService;
 
         public ResendVerifyEmailCommandHandler(IValidator<ResendVerifyEmailDto> validator,
-            UserManager<CompanyUser> userManager,
-            ICompanyUserRepository companyUserRepository,
+            UserManager<ApplicationUser> userManager,
+            IApplicationUserRepository ApplicationUserRepository,
             IMailService mailService)
         {
             this.validator = validator;
             this.userManager = userManager;
-            this.companyUserRepository = companyUserRepository;
+            this.ApplicationUserRepository = ApplicationUserRepository;
             this.mailService = mailService;
         }
         public async Task Handle(ResendVerifyEmailCommand request, CancellationToken cancellationToken)
@@ -38,7 +39,7 @@ namespace SHL.Application.CQRS.Company.Commands
                 throw new FluentValidation.ValidationException(validatorResult.Errors);
 
 
-            var otp = await companyUserRepository.GenerateOtpAsync(request.Dto.EmailAddress, "verify_email");
+            var otp = await ApplicationUserRepository.GenerateOtpAsync(request.Dto.EmailAddress, "verify_email");
             _ = await mailService.SendMail(request.Dto.EmailAddress, $"Your email verification OTP is {otp.Item2}. It expires in 5 min", "Verify your email");
         }
     }

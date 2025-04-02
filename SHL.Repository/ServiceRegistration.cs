@@ -17,7 +17,7 @@ namespace SHL.Repository
         public static IServiceCollection AddRepositories(this IServiceCollection services)
         {
             services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
-            services.AddScoped<ICompanyUserRepository, CompanyUserRepository>();
+            //services.AddScoped<ICompanyUserRepository, CompanyUserRepository>();
             services.AddScoped<ICompanyRepository, CompanyRepository>();
             services.AddScoped<IEquityPlanRepository, EquityPlanRepository>();
             services.AddScoped<IOfferRepository, OfferRepository>();

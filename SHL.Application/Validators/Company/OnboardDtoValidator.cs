@@ -1,4 +1,5 @@
-﻿using FluentValidation;
+﻿using CSL.Models.Identity;
+using FluentValidation;
 using Hangfire.Storage.SQLite;
 using Microsoft.AspNetCore.Identity;
 using SHL.Application.DTO.Company;
@@ -13,9 +14,9 @@ namespace SHL.Application.Validators.Company
 {
    public class OnboardDtoValidator:AbstractValidator<OnboardDto>
     {
-        public OnboardDtoValidator(UserManager<CompanyUser> userManager,
-            IPasswordValidator<CompanyUser> passwordValidator,
-            IUserValidator<CompanyUser> userValidator)
+        public OnboardDtoValidator(UserManager<ApplicationUser> userManager,
+            IPasswordValidator<ApplicationUser> passwordValidator,
+            IUserValidator<ApplicationUser> userValidator)
         {
             RuleFor(c => c.CompanyName)
                  .MaximumLength(100)
@@ -64,7 +65,7 @@ namespace SHL.Application.Validators.Company
             RuleFor(c => c)
                 .CustomAsync(async (model, context, ct) =>
                 {
-                    var user = new CompanyUser
+                    var user = new ApplicationUser
                     {
                         UserName = model.CompanyEmail,
                         Email = model.CompanyEmail
@@ -84,7 +85,7 @@ namespace SHL.Application.Validators.Company
             RuleFor(c => c)
                 .CustomAsync(async (model, context, ct) =>
                 {
-                    var user = new CompanyUser
+                    var user = new ApplicationUser
                     {
                         UserName = model.CompanyEmail,
                         Email = model.CompanyEmail

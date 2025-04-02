@@ -1,17 +1,18 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using CSL.Models.Identity;
+using Microsoft.AspNetCore.Identity;
 using SHL.Domain.Models;
 using static Dapper.SqlMapper;
 
 namespace SHL.Api
 {
-    public class TotpTokenProvider : TotpSecurityStampBasedTokenProvider<CompanyUser>
+    public class TotpTokenProvider : TotpSecurityStampBasedTokenProvider<ApplicationUser>
     {
-        public override Task<bool> CanGenerateTwoFactorTokenAsync(UserManager<CompanyUser> manager, CompanyUser user)
+        public override Task<bool> CanGenerateTwoFactorTokenAsync(UserManager<ApplicationUser> manager, ApplicationUser user)
         {
             return Task.FromResult(false);
         }
 
-        public override Task<string> GetUserModifierAsync(string purpose, UserManager<CompanyUser> manager, CompanyUser user)
+        public override Task<string> GetUserModifierAsync(string purpose, UserManager<ApplicationUser> manager, ApplicationUser user)
         {
             return base.GetUserModifierAsync(purpose, manager, user);
         }

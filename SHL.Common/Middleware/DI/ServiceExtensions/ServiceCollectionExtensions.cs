@@ -1,5 +1,7 @@
 using InventoryManagement.Application.Services.Customer;
 using SHL.Application.Interface.Jwt;
+using SHL.Application.IServices;
+using SHL.Infrastructure.Services;
 
 public static class ServiceCollectionExtensions
 {
@@ -32,6 +34,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IBulkUploadService, BulkUploadService>();
         services.AddScoped<IShareholderService, ShareholderService>();
         services.AddScoped<ISurveyService, SurveyService>();
+        services.AddScoped<IUserOnboardingService, UserOnboardingService>();
         return services;
     }
 }

@@ -15,13 +15,13 @@ namespace SHL.Application.CQRS.Company.Commands
     class ToggleAdminCommandHandler : IRequestHandler<ToggleAdminCommand>
     {
         private readonly IValidator<ToggleAdminDto> validator;
-        private readonly ICompanyUserRepository companyUserRepository;
+        private readonly IApplicationUserRepository ApplicationUserRepository;
 
         public ToggleAdminCommandHandler(IValidator<ToggleAdminDto> validator,
-            ICompanyUserRepository companyUserRepository)
+            IApplicationUserRepository ApplicationUserRepository)
         {
             this.validator = validator;
-            this.companyUserRepository = companyUserRepository;
+            this.ApplicationUserRepository = ApplicationUserRepository;
         }
         public async Task Handle(ToggleAdminCommand request, CancellationToken cancellationToken)
         {
@@ -29,7 +29,7 @@ namespace SHL.Application.CQRS.Company.Commands
             if (validatorResult.Errors.Count > 0)
                 throw new FluentValidation.ValidationException(validatorResult.Errors);
 
-            var result = await companyUserRepository.ToggleAdminAsync(request.Dto.EmailAddress, request.Dto.IsAdmin, cancellationToken);
+            var result = await ApplicationUserRepository.ToggleAdminAsync(request.Dto.EmailAddress, request.Dto.IsAdmin, cancellationToken);
             if (!result.Succeeded)
             {
                 var errors = new List<ValidationFailure>();

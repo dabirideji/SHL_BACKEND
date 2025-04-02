@@ -9,7 +9,7 @@ namespace SHL.Application.IServices
    public interface IUserIdentityService
     {
         string EmailAddress { get; }
-        string SubjectId { get; }
+        Guid SubjectId { get; }
         string FirstName { get; }
         string LastName { get; }
         string PhoneNumber { get; }

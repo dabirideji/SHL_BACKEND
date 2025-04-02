@@ -18,15 +18,15 @@ namespace SHL.Application.CQRS.Company.Commands
     class CreateEmployeeCommandHandler : IRequestHandler<CreateEmployeeCommand>
     {
         private readonly IValidator<CreateEmployeeDto> validator;
-        private readonly ICompanyUserRepository companyUserRepository;
+        private readonly IApplicationUserRepository ApplicationUserRepository;
         private readonly IConfiguration configuration;
 
         public CreateEmployeeCommandHandler(IValidator<CreateEmployeeDto> validator,
-            ICompanyUserRepository companyUserRepository,
+            IApplicationUserRepository ApplicationUserRepository,
             IConfiguration configuration)
         {
             this.validator = validator;
-            this.companyUserRepository = companyUserRepository;
+            this.ApplicationUserRepository = ApplicationUserRepository;
             this.configuration = configuration;
         }
         public async Task Handle(CreateEmployeeCommand request, CancellationToken cancellationToken)
@@ -51,7 +51,7 @@ namespace SHL.Application.CQRS.Company.Commands
                 Department = request.Dto.Department,
                 Designation = request.Dto.Designation
             };
-            var onboardingResult = await companyUserRepository.OnboardStaffAsync(staffOnboardingDto, cancellationToken);
+            var onboardingResult = await ApplicationUserRepository.OnboardStaffAsync(staffOnboardingDto, cancellationToken);
             if (!onboardingResult.Succeeded)
             {
                 var errors = new List<ValidationFailure>();
@@ -64,11 +64,11 @@ namespace SHL.Application.CQRS.Company.Commands
             }
 
             //send onboarding email
-            var token = await companyUserRepository.GeneratePasswordResetTokenAsync(request.Dto.EmailAddress, cancellationToken);
+            var token = await ApplicationUserRepository.GeneratePasswordResetTokenAsync(request.Dto.EmailAddress, cancellationToken);
 
             var baseUrl = configuration["FrontendBaseUrl"]!;
 
-            await companyUserRepository.SendStaffOnboardingLinkAsync(baseUrl, request.Dto.EmailAddress, token.Item2, cancellationToken);
+            await ApplicationUserRepository.SendStaffOnboardingLinkAsync(baseUrl, request.Dto.EmailAddress, token.Item2, cancellationToken);
         }
     }
 }

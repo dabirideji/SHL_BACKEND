@@ -16,15 +16,15 @@ namespace SHL.Application.CQRS.Account.Commands
     class ChangePasswordCommandHandler : IRequestHandler<ChangePasswordCommand>
     {
         private readonly IValidator<ChangePasswordDto> validator;
-        private readonly ICompanyUserRepository companyUserRepository;
+        private readonly IApplicationUserRepository ApplicationUserRepository;
         private readonly IUserIdentityService userIdentityService;
 
         public ChangePasswordCommandHandler(IValidator<ChangePasswordDto> validator,
-            ICompanyUserRepository companyUserRepository,
+            IApplicationUserRepository ApplicationUserRepository,
             IUserIdentityService userIdentityService)
         {
             this.validator = validator;
-            this.companyUserRepository = companyUserRepository;
+            this.ApplicationUserRepository = ApplicationUserRepository;
             this.userIdentityService = userIdentityService;
         }
         public async Task Handle(ChangePasswordCommand request, CancellationToken cancellationToken)
@@ -33,7 +33,7 @@ namespace SHL.Application.CQRS.Account.Commands
             if (validatorResult.Errors.Count > 0)
                 throw new FluentValidation.ValidationException(validatorResult.Errors);
 
-            var result = await companyUserRepository.ChangePasswordAsync(userIdentityService.EmailAddress, request.Dto.CurrentPassword, request.Dto.NewPassword, cancellationToken);
+            var result = await ApplicationUserRepository.ChangePasswordAsync(userIdentityService.EmailAddress, request.Dto.CurrentPassword, request.Dto.NewPassword, cancellationToken);
             if (!result.Succeeded)
             {
                 var errors = new List<ValidationFailure>();

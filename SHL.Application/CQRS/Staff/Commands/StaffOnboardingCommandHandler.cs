@@ -12,15 +12,15 @@ namespace SHL.Application.CQRS.Staff.Commands
     {
         private readonly IValidator<StaffOnboardingDto> validator;
         private readonly IMailService mailService;
-        private readonly ICompanyUserRepository companyUserRepository;
+        private readonly IApplicationUserRepository ApplicationUserRepository;
 
         public StaffOnboardingCommandHandler(IValidator<StaffOnboardingDto> validator,
             IMailService mailService,
-            ICompanyUserRepository companyUserRepository)
+            IApplicationUserRepository ApplicationUserRepository)
         {
             this.validator = validator;
             this.mailService = mailService;
-            this.companyUserRepository = companyUserRepository;
+            this.ApplicationUserRepository = ApplicationUserRepository;
         }
         public async Task Handle(StaffOnboardingCommand request, CancellationToken cancellationToken)
         {
@@ -28,7 +28,7 @@ namespace SHL.Application.CQRS.Staff.Commands
             if (validatorResult.Errors.Count > 0)
                 throw new FluentValidation.ValidationException(validatorResult.Errors);
 
-            var onboardingResult = await companyUserRepository.OnboardStaffAsync(request.Dto,cancellationToken);
+            var onboardingResult = await ApplicationUserRepository.OnboardStaffAsync(request.Dto,cancellationToken);
             if (!onboardingResult.Succeeded)
             {
                 var errors = new List<ValidationFailure>();
@@ -40,7 +40,7 @@ namespace SHL.Application.CQRS.Staff.Commands
                 throw new ValidationException(errors);
             }
 
-            var otp = await companyUserRepository.GenerateOtpAsync(request.Dto.EmailAddress, "verify_email");
+            var otp = await ApplicationUserRepository.GenerateOtpAsync(request.Dto.EmailAddress, "verify_email");
             _ = await mailService.SendMail(request.Dto.EmailAddress, $"Your email verification OTP is {otp.Item2}. It expires in 5 min", "Verify your email");
         }
     }
