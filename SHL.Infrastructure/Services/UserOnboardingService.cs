@@ -1,5 +1,6 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
 using CSL.Models.Identity;
@@ -12,6 +13,7 @@ using SHL.Application.DTO.Identity;
 using SHL.Application.IServices;
 using SHL.Application.Response;
 using SHL.Application.TokenProviders;
+using static SQLite.SQLite3;
 
 namespace SHL.Infrastructure.Services
 {
@@ -40,18 +42,31 @@ namespace SHL.Infrastructure.Services
 
         public async ValueTask<UserResponseDTO> CreateUserAsync(CreateUserDTO userModel)
         {
+            var user = new ApplicationUser();
+            string randomPassword = GeneratePassword();
             string email=string.Empty; string phonenumber=string.Empty;
             var fetchEmailOrPhone= EstractEmailOrPhoneNumber(userModel.EmailOrPhoneNumber);
-            if (fetchEmailOrPhone == "Email") {email = userModel.EmailOrPhoneNumber;} else {phonenumber=userModel.EmailOrPhoneNumber.ToString();}
-            var user = new ApplicationUser
+            if (fetchEmailOrPhone == "Email")
             {
-                UserName=userModel.EmailOrPhoneNumber,
-                Email=email,
-                //PhoneNumber = "234" + phonenumber.Substring(1, 10),
-                CompanyId=userModel.CompanyId,
-                IsAdmin=userModel.IsAdmin,
-            };
-            var result = await userManager.CreateAsync(user, userModel.EmailOrPhoneNumber);
+                user =new ApplicationUser()
+                {
+                    UserName = userModel.EmailOrPhoneNumber,
+                    CompanyId = userModel.CompanyId,
+                    Email = userModel.EmailOrPhoneNumber,
+                    IsAdmin = userModel.IsAdmin,
+                };
+            }
+            else if (fetchEmailOrPhone == "PhoneNumber")
+            {
+                user = new ApplicationUser
+                {
+                    UserName = userModel.EmailOrPhoneNumber,
+                    CompanyId = userModel.CompanyId,
+                    PhoneNumber ="234"+ userModel.EmailOrPhoneNumber,
+                    IsAdmin = userModel.IsAdmin,
+                };
+            }
+            var result = await userManager.CreateAsync(user, randomPassword);
             if (result.Succeeded==false)
             {
             ApiException.ClientError("FAILED TO CREATE USER", 400, new {result});
@@ -66,118 +81,82 @@ namespace SHL.Infrastructure.Services
                 var userData = await UserResponses(user);
                 return userData;
             }
-              //return new DefaultResponse<UserResponseDTO> { Status = false, ResponseMessage = "Failed to create user", Errors = result.Errors.Select(e => e.Description).ToList() };
         }
 
-        public async ValueTask<DefaultResponse<UserResponseDTO>> UserLoginAsync(LoginDTO userModel)
+        public async ValueTask<UserResponseDTO> UserLoginAsync(LoginDTO userModel)
         {
-            try
-            {
 
             var user = await userManager.FindByEmailAsync(userModel.Email);
-            if (user == null) { return new DefaultResponse<UserResponseDTO> { ResponseCode = "404", Status = false, ResponseMessage = "User not found" }; }
+            if (user == null) {
+                ApiException.ClientError("USER NOT FOUND", 404, new { user });
+            }
             var result = await signInManager.CheckPasswordSignInAsync(user, userModel.Password, false);
-            if (result.Succeeded) {
-                var userData = await UserResponses(user);
-                return new DefaultResponse<UserResponseDTO>
-                {
-                    ResponseCode = "200",
-                    ResponseMessage = "Successfully Login",
-                    Status = true,
-                    Data = userData
-                };
-            }
-            return new DefaultResponse<UserResponseDTO> {ResponseCode="400",Status=false,ResponseMessage="Invalid username or password" };
-
-            }
-            catch (Exception ex)
+            if (result.Succeeded == false)
             {
-                return new DefaultResponse<UserResponseDTO> { ResponseCode = "500", Status = false, ResponseMessage = ex.Message};
+                ApiException.ClientError("LOGIN FAILED", 400, new { result });
+                return null;
             }
-        }
-        public async ValueTask<DefaultResponse<UserResponseDTO>> ForgotPasswordAsync(string email)
-        {
-            try
-            {
-
-            var user = await userManager.FindByEmailAsync(email);
-            if (user == null) { return new DefaultResponse<UserResponseDTO> { ResponseCode = "404", Status = false, ResponseMessage = "User not found" }; }
-            var otp = await userManager.GenerateTwoFactorTokenAsync(user, AppTokenProvider.TotpProvider);
-            await emailService.SendMail(user.Email, otp, "SHL OTP");
-
             var userData = await UserResponses(user);
-            return new DefaultResponse<UserResponseDTO>
-            {
-                ResponseCode = "200",
-                ResponseMessage = "otp has been sent to you",
-                Status = true,
-                Data = userData
-            };
-
-            }
-            catch (Exception ex)
-            {
-                logger.LogInformation($"Error for Forgot Password: {ex.Message}");
-                return new DefaultResponse<UserResponseDTO>
-                {
-                    ResponseCode = "500",
-                    ResponseMessage = ex.Message,
-                    Status = false,
-                };
-            }
+            return userData;
+           
         }
-        public async ValueTask<DefaultResponse<UserResponseDTO>> ResetPasswordAsync(ResetPasswordDTO userModel)
+        public async ValueTask<UserResponseDTO> ForgotPasswordAsync(string email)
         {
-            try
+           
+            var user = await userManager.FindByEmailAsync(email);
+            if (user == null)
+            {
+                ApiException.ClientError("USER NOT FOUND", 404, new { user });
+            }
+            var otp = await userManager.GenerateTwoFactorTokenAsync(user, AppTokenProvider.TotpProvider);
+            var sendotp= await emailService.SendMail(user.Email, otp, "SHL OTP");
+            if (sendotp == false)
             {
 
+                ApiException.ClientError("FAILED TO SEND OTP", 400);
+                return null;
+            }
+            var userData = await UserResponses(user);
+            return userData;
+
+
+        }
+        public async ValueTask<UserResponseDTO> ResetPasswordAsync(ResetPasswordDTO userModel)
+        {
+            
                 var user = await userManager.FindByIdAsync(userIdentityService.SubjectId.ToString());
                 if (user == null)
                 {
-                    return DefaultResponse<UserResponseDTO>.ErrorMessage("Unable to retrieve user data. Try again later.");
+                    ApiException.ClientError("USER NOT FOUND", 404, new { user });
                 }
                 var result = await userManager.ResetPasswordAsync(user, await userManager.GeneratePasswordResetTokenAsync(user), userModel.ConfirmPassword);
-                if (result.Succeeded)
+                if (result.Succeeded == false)
                 {
-                    return DefaultResponse<UserResponseDTO>.SuccessMessage("Password has been reset successfully.");
+                    ApiException.ClientError("FAILED TO RESET PASSWORD", 400, new { result });
+                    return null;
                 }
-                else
-                {
-                    return DefaultResponse<UserResponseDTO>.ErrorMessage("Password reset failed");
-                }
-            }
-            catch (Exception ex)
-            {
-                logger.LogInformation($"Error for Reset Password: {ex.Message}");
-                return new DefaultResponse<UserResponseDTO>
-                {
-                  ResponseCode="500",
-                  ResponseMessage = ex.Message,
-                  Status = false,
-                };
-            }
+
+               return null;
         }
         public async ValueTask<ApplicationUser> GetUserByIdAsync(string UserId)
         {
             return await userManager.FindByIdAsync(UserId);
         }
 
-        public async ValueTask<DefaultResponse<UserResponseDTO>> UpdateUserAsync(UpdateUserDTO userModel)
+        public async ValueTask<UserResponseDTO> UpdateUserAsync(UpdateUserDTO userModel)
         {
             throw new NotImplementedException();
         }
-        public async ValueTask<DefaultResponse<bool>> VerifyOtp(string otp)
+        public async ValueTask<bool> VerifyOtp(string otp)
         {
             var user = await userManager.FindByIdAsync(userIdentityService.SubjectId.ToString());
             var result = await userManager.VerifyTwoFactorTokenAsync(user, AppTokenProvider.TotpProvider, otp);
-            if (result)
+            if (result==false)
             {
-                return new DefaultResponse<bool> {Status=true,ResponseCode="200" };
+                ApiException.ClientError("UNABLE TO VERIFY OTP", 400);
+                return false;
             }
-            else
-            {
-                return DefaultResponse<bool>.ErrorMessage("Incorrect OTP. Please try again!");
-            }
+            return true;
         }
         private string EstractEmailOrPhoneNumber(string EmailOrPhoneNumber)
         {
@@ -196,19 +175,58 @@ namespace SHL.Infrastructure.Services
         {
             var registeredModel = new UserResponseDTO
             {
-                PhoneNumber = user.PhoneNumber,
-                FirstName = user?.FirstName,
-                LastName = user?.LastName,
-                Email = user.Email,
-                IsAdmin = user.IsAdmin,
-                Token = await tokenServices.CreateTokenAsync(user),
+                phone_number = user.PhoneNumber,
+                first_name = user?.FirstName,
+                last_name = user?.LastName,
+                email = user.Email,
+                isAdmin = user.IsAdmin,
+                jwt_token = await tokenServices.CreateTokenAsync(user),
   
             };
 
             return registeredModel;
         }
-        
 
-       
+        private static string GeneratePassword(int length = 12)
+        {
+            const string validChars = "ABCDEFGHJKLMNOPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz0123456789!@$?_-";
+            const string numbers = "0123456789";
+            const string specialChars = "!@$?_-";
+
+            StringBuilder result = new StringBuilder();
+            using (var rng = new RNGCryptoServiceProvider())
+            {
+                byte[] uintBuffer = new byte[sizeof(uint)];
+
+                while (result.Length < length)
+                {
+                    rng.GetBytes(uintBuffer);
+                    uint num = BitConverter.ToUInt32(uintBuffer, 0);
+                    result.Append(validChars[(int)(num % (uint)validChars.Length)]);
+                }
+            }
+
+            string password = result.ToString();
+            Random random = new Random();
+
+            // Ensure at least one number exists
+            if (!password.Any(char.IsDigit))
+            {
+                int replaceIndex = random.Next(0, password.Length);
+                result[replaceIndex] = numbers[random.Next(numbers.Length)];
+            }
+
+            // Ensure at least one special character exists
+            if (!password.Any(c => specialChars.Contains(c)))
+            {
+                int replaceIndex = random.Next(0, password.Length);
+                result[replaceIndex] = specialChars[random.Next(specialChars.Length)];
+            }
+
+            return result.ToString();
+        }
+
+
+
     }
 }
