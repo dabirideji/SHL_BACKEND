@@ -40,7 +40,7 @@ namespace SHL.Infrastructure.Services
             this.tokenServices = tokenServices;
         }
 
-        public async ValueTask<UserResponseDTO> CreateUserAsync(CreateUserDTO userModel)
+        public async Task<UserResponseDTO> CreateUserAsync(CreateUserDTO userModel)
         {
             var user = new ApplicationUser();
             string randomPassword = GeneratePassword();
@@ -83,7 +83,7 @@ namespace SHL.Infrastructure.Services
             }
         }
 
-        public async ValueTask<UserResponseDTO> UserLoginAsync(LoginDTO userModel)
+        public async Task<UserResponseDTO> UserLoginAsync(LoginDTO userModel)
         {
 
             var user = await userManager.FindByEmailAsync(userModel.Email);
@@ -100,7 +100,7 @@ namespace SHL.Infrastructure.Services
             return userData;
            
         }
-        public async ValueTask<UserResponseDTO> ForgotPasswordAsync(string email)
+        public async Task<UserResponseDTO> ForgotPasswordAsync(string email)
         {
            
             var user = await userManager.FindByEmailAsync(email);
@@ -121,7 +121,7 @@ namespace SHL.Infrastructure.Services
 
 
         }
-        public async ValueTask<UserResponseDTO> ResetPasswordAsync(ResetPasswordDTO userModel)
+        public async Task<UserResponseDTO> ResetPasswordAsync(ResetPasswordDTO userModel)
         {
             
                 var user = await userManager.FindByIdAsync(userIdentityService.SubjectId.ToString());
@@ -138,16 +138,16 @@ namespace SHL.Infrastructure.Services
 
                return null;
         }
-        public async ValueTask<ApplicationUser> GetUserByIdAsync(string UserId)
+        public async Task<ApplicationUser> GetUserByIdAsync(string UserId)
         {
             return await userManager.FindByIdAsync(UserId);
         }
 
-        public async ValueTask<UserResponseDTO> UpdateUserAsync(UpdateUserDTO userModel)
+        public async Task<UserResponseDTO> UpdateUserAsync(UpdateUserDTO userModel)
         {
             throw new NotImplementedException();
         }
-        public async ValueTask<bool> VerifyOtp(string otp)
+        public async Task<bool> VerifyOtp(string otp)
         {
             var user = await userManager.FindByIdAsync(userIdentityService.SubjectId.ToString());
             var result = await userManager.VerifyTwoFactorTokenAsync(user, AppTokenProvider.TotpProvider, otp);
@@ -171,7 +171,7 @@ namespace SHL.Infrastructure.Services
                 return "PhoneNumber";
             }
         }
-        private async ValueTask<UserResponseDTO> UserResponses(ApplicationUser user)
+        private async Task<UserResponseDTO> UserResponses(ApplicationUser user)
         {
             var registeredModel = new UserResponseDTO
             {

@@ -15,11 +15,11 @@ namespace SHL.Application.IServices
 {
     public interface IUserOnboardingService
     {
-        ValueTask<UserResponseDTO> CreateUserAsync(CreateUserDTO userModel);
-        ValueTask<UserResponseDTO> UpdateUserAsync(UpdateUserDTO userModel);
-        ValueTask<ApplicationUser> GetUserByIdAsync(string UserId);
-        ValueTask<UserResponseDTO> UserLoginAsync(LoginDTO userModel);
-        ValueTask<UserResponseDTO> ResetPasswordAsync(ResetPasswordDTO userModel);
-        ValueTask<UserResponseDTO> ForgotPasswordAsync(string email);
+        Task<UserResponseDTO> CreateUserAsync(CreateUserDTO userModel);
+        Task<UserResponseDTO> UpdateUserAsync(UpdateUserDTO userModel);
+        Task<ApplicationUser> GetUserByIdAsync(string UserId);
+        Task<UserResponseDTO> UserLoginAsync(LoginDTO userModel);
+        Task<UserResponseDTO> ResetPasswordAsync(ResetPasswordDTO userModel);
+        Task<UserResponseDTO> ForgotPasswordAsync(string email);
     }
 }
