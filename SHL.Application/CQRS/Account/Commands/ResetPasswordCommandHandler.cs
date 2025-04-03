@@ -14,13 +14,13 @@ namespace SHL.Application.CQRS.Account.Commands
     class ResetPasswordCommandHandler : IRequestHandler<ResetPasswordCommand>
     {
         private readonly IValidator<ResetPasswordDto> validator;
-        private readonly ICompanyUserRepository companyUserRepository;
+        private readonly IApplicationUserRepository ApplicationUserRepository;
 
         public ResetPasswordCommandHandler(IValidator<ResetPasswordDto> validator,
-            ICompanyUserRepository companyUserRepository)
+            IApplicationUserRepository ApplicationUserRepository)
         {
             this.validator = validator;
-            this.companyUserRepository = companyUserRepository;
+            this.ApplicationUserRepository = ApplicationUserRepository;
         }
         public async Task Handle(ResetPasswordCommand request, CancellationToken cancellationToken)
         {
@@ -28,7 +28,7 @@ namespace SHL.Application.CQRS.Account.Commands
             if (validatorResult.Errors.Count > 0)
                 throw new FluentValidation.ValidationException(validatorResult.Errors);
 
-            var result = await companyUserRepository.ResetPasswordAsync(request.Dto.EmailAddress, request.Dto.Token, request.Dto.Password, cancellationToken);
+            var result = await ApplicationUserRepository.ResetPasswordAsync(request.Dto.EmailAddress, request.Dto.Token, request.Dto.Password, cancellationToken);
         }
     }
 }

@@ -13,6 +13,7 @@ using SHL.Application.Interfaces;
 using SHL.Application.Interfaces.GenericRepositoryPattern;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
+using CSL.Models.Identity;
 
 namespace SHL.Repository.Repositories
 {
@@ -189,17 +190,17 @@ namespace SHL.Repository.Repositories
 
     public class StaffRepository : GenericRepository<Staff>, IStaffRepository
     {
-        private readonly UserManager<CompanyUser> userManager;
+        private readonly UserManager<ApplicationUser> userManager;
 
         public StaffRepository(ICacheManager cacheManager,
-            UserManager<CompanyUser> userManager) : base(cacheManager)
+            UserManager<ApplicationUser> userManager) : base(cacheManager)
         {
             this.userManager = userManager;
         }
 
         public async Task<StaffProfileViewModel?> ProfileAsync(string subjectId)
         {
-            var user = _context.Set<CompanyUser>();
+            var user = _context.Set<ApplicationUser>();
             var bank = _context.Set<StaffBank>();
             var profile = await (from s in _dbSet
                                  join u in user on s.CompanyUserId equals u.Id
@@ -220,7 +221,6 @@ namespace SHL.Repository.Repositories
                                      BankName = sb != null ? sb.BankName : "",
                                      AccountNumber = sb != null ? sb.AccountNumber : "",
                                      EmailAddress = u.Email,
-                                     StaffStatus = u.StaffStatus
                                  }).FirstOrDefaultAsync();
 
             return profile;

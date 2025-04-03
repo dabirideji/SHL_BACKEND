@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Identity;
 namespace CSL.Models.Identity
 {
 
-    public class ApplicationUser : IdentityUser<long>
+    public class ApplicationUser : IdentityUser
     {
 
         public ApplicationUser()
@@ -26,7 +26,7 @@ namespace CSL.Models.Identity
         public string LastComputerName { get; set; }
 
 
-        public virtual ICollection<UserDevice> UserDevices { get; set; }
+        public virtual ICollection<UserDevice>? UserDevices { get; set; }
 
     }
 

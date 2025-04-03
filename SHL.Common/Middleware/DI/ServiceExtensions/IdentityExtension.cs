@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using CSL.Models.Identity;
+using Microsoft.AspNetCore.Identity;
 using SHL.Domain.Models;
 using SHL.Infrastructure;
 using SHL.Repository.Data.Context;
@@ -9,7 +10,7 @@ namespace SHL.Api.Middleware.DI.ServiceExtensions
     {
         public static IServiceCollection AddIdentity(this IServiceCollection services)
         {
-            services.AddIdentityCore<CompanyUser>(opt =>
+            services.AddIdentityCore<ApplicationUser>(opt =>
             {
                 opt.User.RequireUniqueEmail = true;
                 opt.SignIn.RequireConfirmedEmail = true;
@@ -20,7 +21,8 @@ namespace SHL.Api.Middleware.DI.ServiceExtensions
                 opt.Password.RequireUppercase = true;
 
             })
-              .AddUserManager<UserManager<CompanyUser>>()
+              .AddUserManager<UserManager<ApplicationUser>>()
+              .AddSignInManager<SignInManager<ApplicationUser>>()
               .AddUserValidator<UserValidator>()
               .AddRoles<IdentityRole>()
               .AddEntityFrameworkStores<SHLTennantDbContext>()

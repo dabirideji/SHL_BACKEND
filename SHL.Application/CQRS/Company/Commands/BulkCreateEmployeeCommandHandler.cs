@@ -25,20 +25,20 @@ namespace SHL.Application.CQRS.Company.Commands
         private readonly IExcelProcessor excelProcessor;
         private readonly IBulkEmployeeChannel bulkEmployeeChannel;
         private readonly IUserIdentityService userIdentityService;
-        private readonly ICompanyUserRepository companyUserRepository;
+        private readonly IApplicationUserRepository ApplicationUserRepository;
         private readonly IConfiguration configuration;
 
         public BulkCreateEmployeeCommandHandler(ILogger<BulkCreateEmployeeCommandHandler> logger, IExcelProcessor excelProcessor,
             IBulkEmployeeChannel bulkEmployeeChannel,
             IUserIdentityService userIdentityService,
-            ICompanyUserRepository companyUserRepository,
+            IApplicationUserRepository ApplicationUserRepository,
             IConfiguration configuration)
         {
             this.logger = logger;
             this.excelProcessor = excelProcessor;
             this.bulkEmployeeChannel = bulkEmployeeChannel;
             this.userIdentityService = userIdentityService;
-            this.companyUserRepository = companyUserRepository;
+            this.ApplicationUserRepository = ApplicationUserRepository;
             this.configuration = configuration;
         }
         public async Task Handle(BulkCreateEmployeeCommand request, CancellationToken cancellationToken)
@@ -67,7 +67,7 @@ namespace SHL.Application.CQRS.Company.Commands
                         StaffGrade = item.Grade
 
                     };
-                    (IdentityResult Status, Domain.Models.CompanyUser User) registrationResult = await companyUserRepository!.CreateStaffWithoutPasswordAsync(staffModel);
+                    (IdentityResult Status, ApplicationUser User) registrationResult = await ApplicationUserRepository!.CreateStaffWithoutPasswordAsync(staffModel);
 
                     if (registrationResult.Status.Succeeded)
                     {
@@ -84,14 +84,14 @@ namespace SHL.Application.CQRS.Company.Commands
                         if (!string.IsNullOrEmpty(item.PhoneNumber))
                             new Claim(ClaimTypes.MobilePhone, item.PhoneNumber!);
 
-                        _ = await companyUserRepository.AddUserClaimsAsync(registrationResult.User, claims);
+                        _ = await ApplicationUserRepository.AddUserClaimsAsync(registrationResult.User, claims);
 
                         //send email
-                        var token = await companyUserRepository.GeneratePasswordResetTokenAsync(item.EmailAddress, cancellationToken);
+                        var token = await ApplicationUserRepository.GeneratePasswordResetTokenAsync(item.EmailAddress, cancellationToken);
 
                         var baseUrl = configuration!["FrontendBaseUrl"]!;
 
-                        await companyUserRepository.SendStaffOnboardingLinkAsync(baseUrl, item.EmailAddress, token.Item2, cancellationToken);
+                        await ApplicationUserRepository.SendStaffOnboardingLinkAsync(baseUrl, item.EmailAddress, token.Item2, cancellationToken);
                     }
                     else
                     {

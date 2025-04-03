@@ -12,8 +12,8 @@ namespace SHL.Application.Validators.Account
 {
    public class EmployeeInfoUpdateDtoValidator:AbstractValidator<EmployeeInfoUpdateDto>
     {
-        public EmployeeInfoUpdateDtoValidator(UserManager<CompanyUser> userManager,
-            IPasswordValidator<CompanyUser> passwordValidator)
+        public EmployeeInfoUpdateDtoValidator(UserManager<ApplicationUser> userManager,
+            IPasswordValidator<ApplicationUser> passwordValidator)
         {
             RuleFor(c => c.EmailAddress)
                 .EmailAddress()
@@ -36,7 +36,7 @@ namespace SHL.Application.Validators.Account
             RuleFor(c => c)
                 .CustomAsync(async (model, context, ct) =>
                 {
-                    var user = new CompanyUser
+                    var user = new ApplicationUser
                     {
                         UserName = model.EmailAddress,
                         Email = model.EmailAddress

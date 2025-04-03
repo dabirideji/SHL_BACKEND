@@ -19,7 +19,7 @@ namespace SHL.Application.CQRS.Offer.Commands
         private readonly IAppSettingRepository appSettingRepository;
         private readonly IVestedShareTransferRepository vestedShareTransferRepository;
         private readonly IStaffRepository staffRepository;
-        private readonly ICompanyUserRepository companyUserRepository;
+        private readonly IApplicationUserRepository ApplicationUserRepository;
 
         public ChangeStatusCommandHandler(IUserIdentityService userIdentityService,
             IOfferRepository offerRepository,
@@ -29,7 +29,7 @@ namespace SHL.Application.CQRS.Offer.Commands
             IAppSettingRepository appSettingRepository,
             IVestedShareTransferRepository vestedShareTransferRepository,
             IStaffRepository staffRepository,
-            ICompanyUserRepository companyUserRepository)
+            IApplicationUserRepository ApplicationUserRepository)
         {
             this.userIdentityService = userIdentityService;
             this.offerRepository = offerRepository;
@@ -39,7 +39,7 @@ namespace SHL.Application.CQRS.Offer.Commands
             this.appSettingRepository = appSettingRepository;
             this.vestedShareTransferRepository = vestedShareTransferRepository;
             this.staffRepository = staffRepository;
-            this.companyUserRepository = companyUserRepository;
+            this.ApplicationUserRepository = ApplicationUserRepository;
         }
         public async Task Handle(ChangeStatusCommand request, CancellationToken cancellationToken)
         {

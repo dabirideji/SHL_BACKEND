@@ -1,4 +1,5 @@
-﻿using FluentValidation;
+﻿using CSL.Models.Identity;
+using FluentValidation;
 using Microsoft.AspNetCore.Identity;
 using SHL.Application.DTO.Company;
 using SHL.Domain.Models;
@@ -12,7 +13,7 @@ namespace SHL.Application.Validators.Company
 {
     public class VerifyEmailDtoValidator : AbstractValidator<VerifyEmailDto>
     {
-        public VerifyEmailDtoValidator(UserManager<CompanyUser> userManager)
+        public VerifyEmailDtoValidator(UserManager<ApplicationUser> userManager)
         {
             RuleFor(c => c.EmailAddress)
                 .EmailAddress()

@@ -46,7 +46,7 @@ namespace SHL.Application.CQRS.Dividend.Commands
 
             await dividendPayoutRequestRepository.AddAsync(new Domain.Models.DividendPayoutRequest
             {
-                DividendId = dividend!.Id,
+                DividendId =Guid.NewGuid(),
                 Amount = request.Dto.Amount,
                 EmployeeEmailAddress = userIdentityService.EmailAddress,
                 EmployeeName = dividend.EmployeeName,

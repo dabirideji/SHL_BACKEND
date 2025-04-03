@@ -17,15 +17,15 @@ namespace SHL.Application.CQRS.Company.Commands
     class VerifyEmailCommandHandler : IRequestHandler<VerifyEmailCommand>
     {
         private readonly IValidator<VerifyEmailDto> validator;
-        private readonly ICompanyUserRepository companyUserRepository;
-        private readonly UserManager<CompanyUser> userManager;
+        private readonly IApplicationUserRepository ApplicationUserRepository;
+        private readonly UserManager<ApplicationUser> userManager;
 
         public VerifyEmailCommandHandler(IValidator<VerifyEmailDto> validator,
-            ICompanyUserRepository companyUserRepository,
-            UserManager<CompanyUser> userManager)
+            IApplicationUserRepository ApplicationUserRepository,
+            UserManager<ApplicationUser> userManager)
         {
             this.validator = validator;
-            this.companyUserRepository = companyUserRepository;
+            this.ApplicationUserRepository = ApplicationUserRepository;
             this.userManager = userManager;
         }
         public async Task Handle(VerifyEmailCommand request, CancellationToken cancellationToken)
@@ -34,7 +34,7 @@ namespace SHL.Application.CQRS.Company.Commands
             if (validatorResult.Errors.Count > 0)
                 throw new FluentValidation.ValidationException(validatorResult.Errors);
 
-            var result = await companyUserRepository.ValidateOtpAsync(request.Dto.EmailAddress, "verify_email", request.Dto.Otp);
+            var result = await ApplicationUserRepository.ValidateOtpAsync(request.Dto.EmailAddress, "verify_email", request.Dto.Otp);
             if (!result.Succeeded)
             {
                 var errors = new List<ValidationFailure>();
@@ -46,7 +46,7 @@ namespace SHL.Application.CQRS.Company.Commands
                 throw new ValidationException(errors);
             }
 
-            var confirmationResult = await companyUserRepository.ConfirmEmailAsync(request.Dto.EmailAddress);
+            var confirmationResult = await ApplicationUserRepository.ConfirmEmailAsync(request.Dto.EmailAddress);
             if (!confirmationResult.Succeeded)
             {
                 var errors = new List<ValidationFailure>();

@@ -15,19 +15,19 @@ namespace SHL.Application.CQRS.Staff.Commands
         private readonly IStaffRepository staffRepository;
         private readonly IUnitOfWork unitOfWork;
         private readonly IUserIdentityService userIdentityService;
-        private readonly ICompanyUserRepository companyUserRepository;
+        private readonly IApplicationUserRepository ApplicationUserRepository;
 
         public EditProfileCommandHandler(IValidator<EditProfileDto> validator,
             IStaffRepository staffRepository,
             IUnitOfWork unitOfWork,
             IUserIdentityService userIdentityService,
-            ICompanyUserRepository companyUserRepository)
+            IApplicationUserRepository ApplicationUserRepository)
         {
             this.validator = validator;
             this.staffRepository = staffRepository;
             this.unitOfWork = unitOfWork;
             this.userIdentityService = userIdentityService;
-            this.companyUserRepository = companyUserRepository;
+            this.ApplicationUserRepository = ApplicationUserRepository;
         }
         public async Task Handle(EditProfileCommand request, CancellationToken cancellationToken)
         {
@@ -35,10 +35,10 @@ namespace SHL.Application.CQRS.Staff.Commands
             if (validatorResult.Errors.Count > 0)
                 throw new FluentValidation.ValidationException(validatorResult.Errors);
 
-            var user = await companyUserRepository.Get(u => u.Id == userIdentityService.SubjectId)
+            var user = await ApplicationUserRepository.Get(u => u.Id == userIdentityService.SubjectId.ToString())
                 .FirstOrDefaultAsync(cancellationToken);
 
-            var staff = await staffRepository.Get(s => s.CompanyUserId == userIdentityService.SubjectId)
+            var staff = await staffRepository.Get(s => s.Id == userIdentityService.SubjectId)
                 .Include(s => s.Bank)
                 .FirstOrDefaultAsync();
 
@@ -57,7 +57,7 @@ namespace SHL.Application.CQRS.Staff.Commands
                         AccountName = request.Dto.AccountName ?? ""
                     },
                     ChnNumber = request.Dto.ChnNumber,
-                    CompanyUserId = user.Id,
+                    Id = Guid.NewGuid(),
                     CompanyId = userIdentityService.CompanyId,
                     CscsNumber = request.Dto.CscsNumber,
                     StaffDepartment = "",

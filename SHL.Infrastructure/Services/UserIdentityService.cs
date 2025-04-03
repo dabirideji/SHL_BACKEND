@@ -23,6 +23,7 @@ namespace SHL.Infrastructure.Services
 
         public Guid CompanyId => GetCompanyId();
 
+        Guid IUserIdentityService.SubjectId => throw new NotImplementedException();
 
         private string GetNameIdentifier()
         {
