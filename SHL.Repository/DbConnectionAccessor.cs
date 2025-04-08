@@ -26,21 +26,14 @@ namespace SHL.Repository
 
         public string GetConnectionString(string clientId, DatabaseType databaseType = DatabaseType.SQL_SERVER)
         {
-            var connStr = dbContextFactory.GetConnectionString();
-
-            if (!string.IsNullOrEmpty(connStr))
-                return connStr;
-
             var contextDatabaseType = databaseType.ToString().ToUpper();
             var subKey = $"DEFAULT_{contextDatabaseType}_CONNECTION";
             var targetConnectionString = _appSettingAccessor.GetValue("ConnectionStrings", subKey);
-
             if (string.IsNullOrEmpty(targetConnectionString))
             {
                 throw new InvalidOperationException($"Connection string for {subKey} not found in configuration.");
             }
             return targetConnectionString;
-
             // var basePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "wwwroot", "Data", clientId);
             var basePath = Path.Combine("Data", clientId);
             _fileService.CreateDirectory(basePath); // Ensure directory exists
