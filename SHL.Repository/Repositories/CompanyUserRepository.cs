@@ -74,7 +74,8 @@ namespace SHL.Repository.Repositories
         public async Task<IdentityResult> OnboardAsync(OnboardDto dto)
         {
             var domain = dto.CompanyEmail.Split('@')[1];
-            var connectionString = await dbContextFactory.DeployDatabaseInstance(domain);
+            var currentDbContext = dbContextFactory.CreateDbContext(domain);
+            var connectionString = currentDbContext.Database.GetConnectionString();
             var companyInfo = new CompanyInfo
             {
                 DomainName = dto.DomainName,

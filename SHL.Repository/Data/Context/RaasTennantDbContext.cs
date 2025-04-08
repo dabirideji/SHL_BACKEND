@@ -14,46 +14,38 @@ namespace SHL.Repository.Data.Context
     public class SHLTennantDbContext : IdentityDbContext<CompanyUser>, IUnitOfWork
     {
 
-
-        //============== CONSTRUCTOR ===========
-
-#if MIGRATION
-        public SHLTennantDbContext(DbContextOptions<SHLTennantDbContext> options) : base(options)
-        {
-        }
-#else
         private readonly IDbConnectionAccessor dbConnectionAccessor;
+        private readonly IDbContextFactory _dbConnectionFactory;
         private readonly IHttpContextAccessor httpContextAccessor;
 
         public SHLTennantDbContext(IDbConnectionAccessor dbConnectionAccessor,
-            IHttpContextAccessor  httpContextAccessor)
+            IHttpContextAccessor httpContextAccessor,
+            IDbContextFactory dbConnectionFactory)
         {
-
             this.dbConnectionAccessor = dbConnectionAccessor;
             this.httpContextAccessor = httpContextAccessor;
+            _dbConnectionFactory = dbConnectionFactory;
+        }
+
+        public SHLTennantDbContext(DbContextOptions<SHLTennantDbContext> options) : base(options)
+        {
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (!optionsBuilder.IsConfigured)
             {
-                var httpContext = httpContextAccessor.HttpContext;
-                if (httpContext != null && httpContext.Request.Headers.TryGetValue("x-domain", out var databaseName))
-                {
-                    string connectionString = dbConnectionAccessor.GetConnectionString(databaseName);
-                    optionsBuilder.UseSqlServer(connectionString);
-                }
-                else
-                {
-                    optionsBuilder.UseSqlServer(dbConnectionAccessor.GetConnectionString(""));
-                }
-
+                var httpContext = httpContextAccessor?.HttpContext;
+                var dbContextResultFromFactory = _dbConnectionFactory.CreateDbContext();
+                var connectionStringFromFactory = dbContextResultFromFactory.Database.GetConnectionString();
+                optionsBuilder.UseSqlServer(connectionStringFromFactory);
             }
-            optionsBuilder.EnableSensitiveDataLogging(true).LogTo(Console.WriteLine, LogLevel.Information);
-            base.OnConfiguring(optionsBuilder);
 
+            optionsBuilder.EnableSensitiveDataLogging(true)
+                          .LogTo(Console.WriteLine, LogLevel.Information);
+
+            base.OnConfiguring(optionsBuilder);
         }
-#endif
 
 
 

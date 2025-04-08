@@ -15,14 +15,18 @@ namespace SHL.Repository.Repositories.GenericRepositoryImplementations
         public readonly DbContext _context;
         public readonly DbSet<T> _dbSet;
 
-        public GenericRepository(ICacheManager cacheManager)
+        public GenericRepository(ICacheManager cacheManager, DbContext context)
         {
-            
+
             _cacheManager = cacheManager;
             _dbSet = _context.Set<T>();
+            _context = context;
         }
 
-       
+        public GenericRepository(ICacheManager cacheManager)
+        {
+            _cacheManager = cacheManager;
+        }
 
         public async Task<T> AddAsync(T entity)
         {
