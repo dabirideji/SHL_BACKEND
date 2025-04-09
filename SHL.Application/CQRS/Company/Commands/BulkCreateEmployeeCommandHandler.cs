@@ -1,4 +1,5 @@
-﻿using FluentValidation.Results;
+﻿using CSL.Models.Identity;
+using FluentValidation.Results;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -67,7 +68,7 @@ namespace SHL.Application.CQRS.Company.Commands
                         StaffGrade = item.Grade
 
                     };
-                    (IdentityResult Status, Domain.Models.CompanyUser User) registrationResult = await companyUserRepository!.CreateStaffWithoutPasswordAsync(staffModel);
+                    (IdentityResult Status, ApplicationUser User) registrationResult = await companyUserRepository!.CreateStaffWithoutPasswordAsync(staffModel);
 
                     if (registrationResult.Status.Succeeded)
                     {

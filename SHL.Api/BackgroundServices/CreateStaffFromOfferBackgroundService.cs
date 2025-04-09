@@ -1,4 +1,5 @@
 ﻿
+using CSL.Models.Identity;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.WebEncoders.Testing;
 using SHL.Application.IServices;
@@ -39,7 +40,7 @@ namespace SHL.Api.BackgroundServices
 
                         // Process the item
                         logger.LogInformation($"registering staff with email: {item.EmailAddress}");
-                        (IdentityResult Status, Domain.Models.CompanyUser User) registrationResult = await companyUserRepository!.CreateStaffWithoutPasswordAsync(item);
+                        (IdentityResult Status, ApplicationUser User) registrationResult = await companyUserRepository!.CreateStaffWithoutPasswordAsync(item);
 
                         if (registrationResult.Status.Succeeded)
                         {

@@ -19,6 +19,9 @@ namespace SHL.Infrastructure
             services.AddSingleton<IOfferUserChannel, OfferUserChannel>();
             services.AddSingleton<IOfferEmailChannel, OfferEmailChannel>();
             services.AddSingleton<IBulkEmployeeChannel, BulkEmployeeChannel>();
+            services.AddScoped<IUserOnboardingService, UserOnboardingService>();
+            services.AddScoped<IEmailService,EmailService>();
+            services.AddScoped<ITokenServices, TokenServices>();
             return services;
         }
     }

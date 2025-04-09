@@ -1,4 +1,5 @@
-﻿using FluentValidation;
+﻿using CSL.Models.Identity;
+using FluentValidation;
 using FluentValidation.Results;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
@@ -18,11 +19,11 @@ namespace SHL.Application.CQRS.Company.Commands
     {
         private readonly IValidator<VerifyEmailDto> validator;
         private readonly ICompanyUserRepository companyUserRepository;
-        private readonly UserManager<CompanyUser> userManager;
+        private readonly UserManager<ApplicationUser> userManager;
 
         public VerifyEmailCommandHandler(IValidator<VerifyEmailDto> validator,
             ICompanyUserRepository companyUserRepository,
-            UserManager<CompanyUser> userManager)
+            UserManager<ApplicationUser> userManager)
         {
             this.validator = validator;
             this.companyUserRepository = companyUserRepository;

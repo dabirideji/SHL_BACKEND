@@ -69,6 +69,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\SHL.Application\SHL.Application.csproj" />
+    <ProjectReference Include="..\SHL.Models\SHL.Models.csproj" />
     <ProjectReference Include="..\SHL.Repository\SHL.Repository.csproj" />
   </ItemGroup>
 

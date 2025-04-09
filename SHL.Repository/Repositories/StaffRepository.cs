@@ -6,22 +6,23 @@ using SHL.Application.DTO.Staff;
 using SHL.Application.ViewModels;
 using System.Security.Principal;
 using SHL.Application.IManagers;
+using CSL.Models.Identity;
 
 namespace SHL.Repository.Repositories
 {
     public class StaffRepository : GenericRepository<Staff>, IStaffRepository
     {
-        private readonly UserManager<CompanyUser> userManager;
+        private readonly UserManager<ApplicationUser> userManager;
 
         public StaffRepository(ICacheManager cacheManager,
-            UserManager<CompanyUser> userManager) : base(cacheManager)
+            UserManager<ApplicationUser> userManager) : base(cacheManager)
         {
             this.userManager = userManager;
         }
 
         public async Task<StaffProfileViewModel?> ProfileAsync(string subjectId)
         {
-            var user = _context.Set<CompanyUser>();
+            var user = _context.Set<ApplicationUser>();
             var bank = _context.Set<StaffBank>();
             var profile = await (from s in _dbSet
                                  join u in user on s.CompanyUserId equals u.Id
@@ -42,7 +43,7 @@ namespace SHL.Repository.Repositories
                                      BankName = sb != null ? sb.BankName : "",
                                      AccountNumber = sb != null ? sb.AccountNumber : "",
                                      EmailAddress = u.Email,
-                                     StaffStatus = u.StaffStatus
+                                    // StaffStatus = u.StaffStatus
                                  }).FirstOrDefaultAsync();
 
             return profile;
@@ -50,7 +51,7 @@ namespace SHL.Repository.Repositories
 
         public async Task<StaffProfileViewModel?> ProfileByEmailAddressAsync(string emailAddress)
         {
-            var user = _context.Set<CompanyUser>();
+            var user = _context.Set<ApplicationUser>();
             var bank = _context.Set<StaffBank>();
 
             var profile = await (from s in _dbSet
@@ -72,7 +73,7 @@ namespace SHL.Repository.Repositories
                                      BankName = sb != null ? sb.BankName : "",
                                      AccountNumber = sb != null ? sb.AccountNumber : "",
                                      EmailAddress = u.Email,
-                                     StaffStatus = u.StaffStatus
+                                   //  StaffStatus = u.StaffStatus
 
                                  }).FirstOrDefaultAsync();
 
@@ -81,7 +82,7 @@ namespace SHL.Repository.Repositories
 
         public async Task<List<StaffProfileViewModel>> CompanyStaffsAsync(Guid companyId)
         {
-            var user = _context.Set<CompanyUser>();
+            var user = _context.Set<ApplicationUser>();
             var bank = _context.Set<StaffBank>();
            // var role = _context.Set<IdentityRole>();
            // var userRole = _context.Set<IdentityUserRole<string>>();
@@ -105,7 +106,7 @@ namespace SHL.Repository.Repositories
                                     BankName = sb != null ? sb.BankName : "",
                                     AccountNumber = sb != null ? sb.AccountNumber : "",
                                     EmailAddress = u.Email,
-                                    StaffStatus = u.StaffStatus,
+                                   // StaffStatus = u.StaffStatus,
                                     IsAdmin = u.IsAdmin
                                 }).ToListAsync();
             //foreach (var staff in staffs)

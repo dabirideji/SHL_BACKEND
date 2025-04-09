@@ -1,4 +1,5 @@
-﻿using FluentValidation;
+﻿using CSL.Models.Identity;
+using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 using SHL.Application.DTO.Company;
@@ -17,12 +18,12 @@ namespace SHL.Application.CQRS.Company.Commands
     class ResendVerifyEmailCommandHandler : IRequestHandler<ResendVerifyEmailCommand>
     {
         private readonly IValidator<ResendVerifyEmailDto> validator;
-        private readonly UserManager<CompanyUser> userManager;
+        private readonly UserManager<ApplicationUser> userManager;
         private readonly ICompanyUserRepository companyUserRepository;
         private readonly IMailService mailService;
 
         public ResendVerifyEmailCommandHandler(IValidator<ResendVerifyEmailDto> validator,
-            UserManager<CompanyUser> userManager,
+            UserManager<ApplicationUser> userManager,
             ICompanyUserRepository companyUserRepository,
             IMailService mailService)
         {

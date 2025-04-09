@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using CSL.Models.Identity;
+using Microsoft.AspNetCore.Identity;
 using SHL.Application.DTO.Account;
 using SHL.Application.DTO.Company;
 using SHL.Application.DTO.Staff;
@@ -14,10 +15,10 @@ using System.Threading.Tasks;
 
 namespace SHL.Application.Repositories
 {
-    public interface ICompanyUserRepository : IGenericRepository<CompanyUser>
+    public interface ICompanyUserRepository : IGenericRepository<ApplicationUser>
     {
         Task<IdentityResult> OnboardAsync(OnboardDto dto);
-        string GenerateToken(CompanyUser user, IEnumerable<Claim> claims);
+        string GenerateToken(ApplicationUser user, IEnumerable<Claim> claims);
         Task<(IdentityResult, string)> GenerateEmailConfirmationTokenAsync(string userName, CancellationToken cancellationToken);
         Task<IdentityResult> ConfirmEmailTokenAsync(string userName, string code, CancellationToken cancellationToken);
         Task<(IdentityResult, string)> GeneratePasswordResetTokenAsync(string userName, CancellationToken cancellationToken);
@@ -28,8 +29,8 @@ namespace SHL.Application.Repositories
 
         Task<IdentityResult> ValidateOtpAsync(string userName, string purpose, string otp);
         Task<IdentityResult> ConfirmEmailAsync(string userName);
-        Task<(IdentityResult status, CompanyUser user)> CreateStaffWithoutPasswordAsync(StaffModel model);
-        Task<IdentityResult> AddUserClaimsAsync(CompanyUser user, List<Claim> claims);
+        Task<(IdentityResult status, ApplicationUser user)> CreateStaffWithoutPasswordAsync(StaffModel model);
+        Task<IdentityResult> AddUserClaimsAsync(ApplicationUser user, List<Claim> claims);
         Task<IdentityResult> UpdateEmployeeProfile(EmployeeInfoUpdateDto dto, CancellationToken cancellationToken);
         Task<IdentityResult> OnboardStaffAsync(StaffOnboardingDto staff, CancellationToken cancellationToken);
         Task SendStaffOnboardingLinkAsync(string frondEndBaseUrl, string emailAddress, string token, CancellationToken cancellationToken);

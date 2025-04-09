@@ -54,7 +54,7 @@ namespace SHL.Application.CQRS.Offer.Commands
                 AllocatedUnits = request.Dto.OfferValue.ToString(),
                 DateIssued = request.Dto.VestStartDate.ToString(),
                 Email = e,
-                Name = GetName(users, e),
+              //  Name = GetName(users, e),
                 VestingDate = request.Dto.VestEndDate.ToString(),
                 Division = "",
                 Grade = "",

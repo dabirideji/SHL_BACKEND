@@ -57,6 +57,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\SHL.Domain\SHL.Domain.csproj" />
+    <ProjectReference Include="..\SHL.Models\SHL.Models.csproj" />
   </ItemGroup>
 
 </Project>

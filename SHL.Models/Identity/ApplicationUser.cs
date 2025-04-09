@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Identity;
 namespace CSL.Models.Identity
 {
 
-    public class ApplicationUser : IdentityUser<long>
+    public class ApplicationUser : IdentityUser
     {
 
         public ApplicationUser()
@@ -24,8 +24,6 @@ namespace CSL.Models.Identity
         public string Token { get; set; }
         public string ApiSessionId { get; set; }
         public string LastComputerName { get; set; }
-
-
         public virtual ICollection<UserDevice> UserDevices { get; set; }
 
     }
