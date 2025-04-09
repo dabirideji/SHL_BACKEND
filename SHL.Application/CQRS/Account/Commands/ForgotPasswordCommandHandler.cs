@@ -1,4 +1,5 @@
-﻿using MediatR;
+﻿using CSL.Models.Identity;
+using MediatR;
 using Microsoft.AspNetCore.Identity;
 using SHL.Application.Repositories;
 using SHL.Application.Services;
@@ -15,11 +16,11 @@ namespace SHL.Application.CQRS.Account.Commands
     class ForgotPasswordCommandHandler : IRequestHandler<ForgotPasswordCommand>
     {
         private readonly ICompanyUserRepository companyUserRepository;
-        private readonly UserManager<CompanyUser> userManager;
+        private readonly UserManager<ApplicationUser> userManager;
         private readonly IMailService mailService;
 
         public ForgotPasswordCommandHandler(ICompanyUserRepository companyUserRepository,
-            UserManager<Domain.Models.CompanyUser> userManager,
+            UserManager<ApplicationUser> userManager,
             IMailService mailService)
         {
             this.companyUserRepository = companyUserRepository;

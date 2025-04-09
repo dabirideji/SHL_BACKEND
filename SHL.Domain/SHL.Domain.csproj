@@ -59,4 +59,8 @@
     <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="8.0.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\SHL.Models\SHL.Models.csproj" />
+  </ItemGroup>
+
 </Project>

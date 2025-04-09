@@ -1,4 +1,5 @@
 ﻿
+using CSL.Models.Identity;
 using Microsoft.AspNetCore.Identity;
 using SHL.Application.IServices;
 using SHL.Application.Models;
@@ -54,7 +55,7 @@ namespace SHL.Api.BackgroundServices
                             StaffGrade = item.Grade
 
                         };
-                        (IdentityResult Status, Domain.Models.CompanyUser User) registrationResult = await companyUserRepository!.CreateStaffWithoutPasswordAsync(staffModel);
+                        (IdentityResult Status, ApplicationUser User) registrationResult = await companyUserRepository!.CreateStaffWithoutPasswordAsync(staffModel);
 
                         if (registrationResult.Status.Succeeded)
                         {

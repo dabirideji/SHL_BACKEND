@@ -1,3 +1,4 @@
+using CSL.Models.Identity;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
@@ -11,7 +12,7 @@ using System.Reflection;
 
 namespace SHL.Repository.Data.Context
 {
-    public class SHLTennantDbContext : IdentityDbContext<CompanyUser>, IUnitOfWork
+    public class SHLTennantDbContext : IdentityDbContext<ApplicationUser>, IUnitOfWork
     {
 
         private readonly IDbConnectionAccessor dbConnectionAccessor;

@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using CSL.Models.Identity;
 using Microsoft.AspNetCore.Identity;
 using SHL.Application.CustomExceptions;
 using SHL.Application.DTO.Company.Request;
@@ -17,12 +18,12 @@ namespace InventoryManagement.Application.Services.Customer
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
         private readonly IContactService _contactService;
-        private readonly UserManager<CompanyUser> userManager;
+        private readonly UserManager<ApplicationUser> userManager;
         private readonly ICompanyUserRepository companyUserRepository;
         private readonly ICompanyRepository companyRepository;
 
         public StaffService(IUnitOfWork unitOfWork, IMapper mapper, IContactService contactService,
-            UserManager<CompanyUser> userManager,
+            UserManager<ApplicationUser> userManager,
             ICompanyUserRepository companyUserRepository,
             ICompanyRepository companyRepository) : base(unitOfWork, mapper)
         {
@@ -61,7 +62,7 @@ namespace InventoryManagement.Application.Services.Customer
                 return default;
             }
 
-            if (!string.Equals( user.StaffStatus, StaffStatus.ACTIVE.ToString(),StringComparison.OrdinalIgnoreCase))
+            if (!string.Equals( user.FirstName, StaffStatus.ACTIVE.ToString(),StringComparison.OrdinalIgnoreCase))
             {
                 ApiException.ClientError("user is not active, kindly contact your administrator");                
             }

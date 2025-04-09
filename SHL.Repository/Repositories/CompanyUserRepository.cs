@@ -1,4 +1,5 @@
 ﻿using Azure.Core;
+using CSL.Models.Identity;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.AspNetCore.WebUtilities;
@@ -14,17 +15,18 @@ using SHL.Application.Interfaces;
 using SHL.Application.Models;
 using SHL.Application.Services;
 using SHL.Domain.Models.Categories;
+using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 
 namespace SHL.Repository.Repositories
 {
-    public class CompanyUserRepository : GenericRepository<CompanyUser>, ICompanyUserRepository
+    public class CompanyUserRepository : GenericRepository<ApplicationUser>, ICompanyUserRepository
     {
 
         private readonly JwtOptions jwtOptions;
-        private readonly UserManager<CompanyUser> userManager;
+        private readonly UserManager<ApplicationUser> userManager;
         private readonly ICompanyRepository companyRepository;
         private readonly IStaffRepository staffRepository;
         private readonly SHLMasterDbContext SHLMasterDbContext;
@@ -33,7 +35,7 @@ namespace SHL.Repository.Repositories
         private readonly IMailService mailService;
 
         public CompanyUserRepository(SHLTennantDbContext context,
-            UserManager<CompanyUser> userManager,
+            UserManager<ApplicationUser> userManager,
             ICompanyRepository companyRepository,
             IStaffRepository staffRepository,
             ICacheManager cacheManager,
@@ -52,7 +54,7 @@ namespace SHL.Repository.Repositories
             this.dbContextFactory = dbContextFactory;
             this.mailService = mailService;
         }
-        public string GenerateToken(CompanyUser user, IEnumerable<Claim> claims)
+        public string GenerateToken(ApplicationUser user, IEnumerable<Claim> claims)
         {
 
             var signingCredentials = new SigningCredentials(
@@ -90,7 +92,7 @@ namespace SHL.Repository.Repositories
 
             // var companyInfo = await GetCompanyIdAsync(dto.CompanyEmail);
 
-            var companyUser = new CompanyUser
+            var companyUser = new ApplicationUser
             {
                 Email = dto.CompanyEmail,
                 UserName = dto.CompanyEmail,
@@ -98,14 +100,14 @@ namespace SHL.Repository.Repositories
                 LastName = dto.LastName,
                 PhoneNumber = dto.PhoneNumber,
                 IsAdmin = true,
-                Staff = new Staff
-                {
-                    CompanyId = companyInfo.Id,
-                    StaffCode = "",
-                    StaffDepartment = "",
-                    StaffGrade = "",
-                    StaffStatus = Domain.Models.Categories.StaffStatus.ACTIVE
-                }
+                //Staff = new Staff
+                //{
+                //    CompanyId = companyInfo.Id,
+                //    StaffCode = "",
+                //    StaffDepartment = "",
+                //    StaffGrade = "",
+                //    StaffStatus = Domain.Models.Categories.StaffStatus.ACTIVE
+                //}
             };
 
             var company = new Company
@@ -124,7 +126,8 @@ namespace SHL.Repository.Repositories
             if (result.Succeeded)
             {
                 //add claims
-                await AddUserClaimsAsync(companyUser, company.Id.ToString());
+                var claim = new List<Claim>();
+                await AddUserClaimsAsync(companyUser, claim);
 
                 //add roles
                 var roles = Enum.GetNames<Domain.Enums.Role>();
@@ -137,7 +140,7 @@ namespace SHL.Repository.Repositories
         public async Task<IdentityResult> OnboardStaffAsync(StaffOnboardingDto staff, CancellationToken cancellationToken)
         {
             var companyInfo = await GetCompanyIdAsync(staff.EmailAddress);
-            var companyUser = new CompanyUser
+            var companyUser = new ApplicationUser
             {
                 Email = staff.EmailAddress,
                 UserName = staff.EmailAddress,
@@ -161,7 +164,7 @@ namespace SHL.Repository.Repositories
                 StaffCode = staff.EmployeeId,
                 StaffStatus = Domain.Models.Categories.StaffStatus.ACTIVE
             };
-            companyUser.Staff = newStaff;
+           // companyUser.Staff = newStaff;
             // await staffRepository.AddAsync(newStaff);
 
             var result = string.IsNullOrEmpty(staff.Password) ? await userManager.CreateAsync(companyUser) :
@@ -297,22 +300,22 @@ namespace SHL.Repository.Repositories
             return confirmationResult;
         }
 
-        public async Task<(IdentityResult status, CompanyUser user)> CreateStaffWithoutPasswordAsync(StaffModel model)
+        public async Task<(IdentityResult status, ApplicationUser user)> CreateStaffWithoutPasswordAsync(StaffModel model)
         {
-            var companyUser = new CompanyUser
+            var companyUser = new ApplicationUser
             {
                 Email = model.EmailAddress,
                 UserName = model.EmailAddress,
                 FirstName = model.FirstName,
                 LastName = model.LastName,
-                Staff = new Domain.Models.Staff
-                {
-                    CompanyId = model.CompanyId,
-                    StaffCode = model.StaffCode,
-                    StaffDepartment = model.StaffDepartment,
-                    StaffGrade = model.StaffGrade,
-                    StaffStatus = Domain.Models.Categories.StaffStatus.ACTIVE
-                }
+                //Staff = new Domain.Models.Staff
+                //{
+                //    CompanyId = model.CompanyId,
+                //    StaffCode = model.StaffCode,
+                //    StaffDepartment = model.StaffDepartment,
+                //    StaffGrade = model.StaffGrade,
+                //    StaffStatus = Domain.Models.Categories.StaffStatus.ACTIVE
+                //}
             };
 
             var result = await userManager.CreateAsync(companyUser);
@@ -320,7 +323,7 @@ namespace SHL.Repository.Repositories
             return (result, companyUser);
         }
 
-        public async Task<IdentityResult> AddUserClaimsAsync(CompanyUser user, List<Claim> claims)
+        public async Task<IdentityResult> AddUserClaimsAsync(ApplicationUser user, List<Claim> claims)
         {
             var result = await userManager.AddClaimsAsync(user, claims);
             return result;
@@ -371,7 +374,7 @@ namespace SHL.Repository.Repositories
                 return result;
             }
             var staffStatus = (StaffStatus)Enum.Parse(typeof(StaffStatus), status);
-            user.StaffStatus = staffStatus.ToString();
+           // user.StaffStatus = staffStatus.ToString();
 
             var changeStatusResult = await userManager.UpdateAsync(user);
             return changeStatusResult;
@@ -396,7 +399,7 @@ namespace SHL.Repository.Repositories
             }
         }
 
-        async Task AddUserClaimsAsync(CompanyUser user, string companyId)
+        async Task AddUserClaimsAsync(ApplicationUser user, string companyId)
         {
             var claims = new List<Claim>
             {
@@ -411,12 +414,12 @@ namespace SHL.Repository.Repositories
             _ = await userManager.AddClaimsAsync(user, claims);
         }
 
-        async Task AddUserToRoleAsync(CompanyUser user, string role)
+        async Task AddUserToRoleAsync(ApplicationUser user, string role)
         {
             _ = await userManager.AddToRoleAsync(user, role);
         }
 
-        async Task AddUserToRolesAsync(CompanyUser user, List<string> roles)
+        async Task AddUserToRolesAsync(ApplicationUser user, List<string> roles)
         {
             _ = await userManager.AddToRolesAsync(user, roles);
         }

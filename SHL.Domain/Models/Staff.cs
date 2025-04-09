@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations.Schema;
+using CSL.Models.Identity;
 
 namespace SHL.Domain.Models
 {
