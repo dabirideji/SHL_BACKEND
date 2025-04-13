@@ -51,6 +51,7 @@ namespace SHL.Repository.Data.Context
 
         //============== DATABASE TABLES ===============
         public DbSet<AuditLog> AuditLogs { get; set; }
+        public DbSet<FakeUser> FakeUsers { get; set; }
         public DbSet<Shareholder> Shareholders { get; set; }
         public DbSet<UploadedDocument> UploadedDocuments { get; set; }
         public DbSet<PoolDocument> PoolDocuments { get; set; }

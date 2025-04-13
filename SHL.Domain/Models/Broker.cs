@@ -14,4 +14,10 @@ namespace SHL.Domain.Models
         public string ContactPerson { get; set; } = default!;
         public string? Address { get; set; }
     }
+
+    public class FakeUser : BaseEntity
+    {
+        public string Name { get; set; }
+        public string Email { get; set; }
+    }
 }

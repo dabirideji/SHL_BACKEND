@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using SHL.Application.Interfaces.GenericRepositoryPattern;
 using Microsoft.Extensions.DependencyInjection;
 using SHL.Application.Interfaces;
 using Microsoft.EntityFrameworkCore.Infrastructure;
@@ -7,7 +6,7 @@ using Microsoft.EntityFrameworkCore.ChangeTracking;
 
 namespace SHL.Repository.Repositories
 {
-    public class UnitOfWork : IUnitOfWork
+    public class UnitOfWork : SHL.Application.Interfaces.GenericRepositoryPattern.IUnitOfWork
 {
     private readonly IServiceProvider _serviceProvider;
     private readonly ICacheManager _cacheManager;
@@ -27,14 +26,14 @@ namespace SHL.Repository.Repositories
         return dbContextFactory.CreateDbContext();
     }
 
-    public IGenericRepository<T> GetRepository<T>() where T : class
+    public SHL.Application.Interfaces.GenericRepositoryPattern.IGenericRepository<T> GetRepository<T>() where T : class
     {
         if (!_repositories.ContainsKey(typeof(T)))
         {
-            _repositories[typeof(T)] = new Lazy<GenericRepository<T>>(
-                () => new GenericRepository<T>(_cacheManager));
+            _repositories[typeof(T)] = new Lazy<SHL.Repository.Repositories.GenericRepositoryImplementations.GenericRepository<T>>(
+                () => new SHL.Repository.Repositories.GenericRepositoryImplementations.GenericRepository<T>(_cacheManager));
         }
-        return ((Lazy<GenericRepository<T>>)_repositories[typeof(T)]).Value;
+        return ((Lazy<SHL.Repository.Repositories.GenericRepositoryImplementations.GenericRepository<T>>)_repositories[typeof(T)]).Value;
     }
 
     public async Task<int> SaveAsync()

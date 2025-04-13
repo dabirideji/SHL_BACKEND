@@ -11,27 +11,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IFileService, FileService>();
         services.AddScoped<IHttpContextService, HttpContextService>();
         services.AddScoped(typeof(IGenericService<,,,>), typeof(GenericService<,,,>));
-        services.AddScoped<ICompanyService, CompanyService>();
-        services.AddScoped<IStaffService, StaffService>();
-        services.AddScoped<IOptionPoolService, OptionPoolService>();
-        services.AddScoped<ISubscriptionService, SubscriptionService>();
-        services.AddScoped<IInvitationService, InvitationService>();
-        services.AddScoped<IGrantService, GrantService>();
-        services.AddScoped<IUploadedDocumentService, UploadedDocumentService>();
-        services.AddScoped<IOptionPoolApprovalService, OptionPoolApprovalService>();
         services.AddScoped<IMailService, MailService>();
-        services.AddScoped<ITokenService, TokenService>();
-        services.AddScoped<IEmploymentDetailService, EmploymentDetailService>();
-        services.AddScoped<IPayoutAccountService, PayoutAccountService>();
-        services.AddScoped<IContactService, ContactService>();
-        services.AddScoped<IOptionHolderService, OptionHolderService>();
-        services.AddScoped<IPoolDocumentService, PoolDocumentService>();
-        services.AddScoped<IPortfolioService, PortfolioService>();
-        services.AddScoped<IOptionHolderSignatureService, OptionHolderSignatureService>();
-        services.AddScoped<IVestingScheduleService, VestingScheduleService>();
-        services.AddScoped<IBulkUploadService, BulkUploadService>();
-        services.AddScoped<IShareholderService, ShareholderService>();
-        services.AddScoped<ISurveyService, SurveyService>();
         return services;
     }
 }

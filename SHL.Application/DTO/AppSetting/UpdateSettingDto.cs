@@ -6,6 +6,12 @@ using System.Threading.Tasks;
 
 namespace SHL.Application.DTO.AppSetting
 {
+    public class GenerateTokenDTO
+    {
+        public string CompanyCode { get; set; }
+    }
+
+    
     public class UpdateSettingDto
     {
         public bool CanEmployeeTransferShares { get; set; }
