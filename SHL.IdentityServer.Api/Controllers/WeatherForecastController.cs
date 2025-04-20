@@ -1,33 +1,39 @@
 using Microsoft.AspNetCore.Mvc;
+using SHL.Domain.Models;
 
 namespace SHL.IdentityServer.Api.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class WeatherForecastController : ControllerBase
+    public class FakeUserController : ControllerBase
     {
-        private static readonly string[] Summaries = new[]
-        {
-        "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-    };
 
-        private readonly ILogger<WeatherForecastController> _logger;
+        private readonly ILogger<FakeUserController> _logger;
+        private readonly Application.Interfaces.GenericRepositoryPattern.IUnitOfWork _unitOfWork;
 
-        public WeatherForecastController(ILogger<WeatherForecastController> logger)
+        public FakeUserController(ILogger<FakeUserController> logger,SHL.Application.Interfaces.GenericRepositoryPattern.IUnitOfWork unitOfWork)
         {
             _logger = logger;
+            _unitOfWork=unitOfWork;
         }
 
-        [HttpGet(Name = "GetWeatherForecast")]
-        public IEnumerable<WeatherForecast> Get()
+      
+        [HttpGet("Seed-Fake-User")]
+        public IEnumerable<FakeUser> GetFakeUser()
         {
-            return Enumerable.Range(1, 5).Select(index => new WeatherForecast
-            {
-                Date = DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-                TemperatureC = Random.Shared.Next(-20, 55),
-                Summary = Summaries[Random.Shared.Next(Summaries.Length)]
-            })
-            .ToArray();
+            var fakeUserRepo=_unitOfWork.Set<FakeUser>();
+
+            FakeUser fakeUser = new FakeUser();
+            fakeUser.Email = "dabirideji@fakeUser.com";
+            fakeUser.Name = "Dabiiri Deji";
+            fakeUser.CreatedAt = DateTime.Now;
+            fakeUser.UpdatedAt = DateTime.MinValue;
+            fakeUserRepo.AddAsync(fakeUser);
+            _unitOfWork.SaveChanges(true);
+
+            var fakeUsers = fakeUserRepo.ToList();
+            Console.WriteLine(fakeUsers);
+            return fakeUsers;
         }
     }
 }

@@ -16,9 +16,6 @@ namespace SHL.Infrastructure
             services.AddScoped<IAzureBlobStorageService, AzureBlobStorageService>();
             services.AddScoped<IUserIdentityService, UserIdentityService>();
             services.AddScoped<IExcelProcessor, ExcelProcessor>();
-            services.AddSingleton<IOfferUserChannel, OfferUserChannel>();
-            services.AddSingleton<IOfferEmailChannel, OfferEmailChannel>();
-            services.AddSingleton<IBulkEmployeeChannel, BulkEmployeeChannel>();
             return services;
         }
     }
