@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace SHL.Repository.Migrations
 {
     /// <inheritdoc />
-    public partial class initials : Migration
+    public partial class AddedFakeUsers : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -81,8 +81,10 @@ namespace SHL.Repository.Migrations
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    FirstName = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    LastName = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    FirstName = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
+                    LastName = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
+                    StaffStatus = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false, defaultValue: "ACTIVE"),
+                    IsAdmin = table.Column<bool>(type: "bit", nullable: false),
                     UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     Email = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
@@ -91,7 +93,7 @@ namespace SHL.Repository.Migrations
                     PasswordHash = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     SecurityStamp = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     ConcurrencyStamp = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    PhoneNumber = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
+                    PhoneNumber = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: true),
                     PhoneNumberConfirmed = table.Column<bool>(type: "bit", nullable: false),
                     TwoFactorEnabled = table.Column<bool>(type: "bit", nullable: false),
                     LockoutEnd = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
@@ -134,6 +136,21 @@ namespace SHL.Repository.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_ExcerciseSettings", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "FakeUsers",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_FakeUsers", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -193,26 +210,6 @@ namespace SHL.Repository.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Shareholders",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    CompanyCode = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    CompanyName = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    ShareholderNumber = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    ShareholderName = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    ShareholderAddress = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    ShareholderEmailAddress = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    ShareholderPhoneNumber = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Shareholders", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Subscriptions",
                 columns: table => new
                 {
@@ -242,6 +239,120 @@ namespace SHL.Repository.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Surveys", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "tbl_AppSetting",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    CanEmployeeTransferShares = table.Column<bool>(type: "bit", nullable: false),
+                    AllowIncentive = table.Column<bool>(type: "bit", nullable: false),
+                    ToggleRsuEquityType = table.Column<bool>(type: "bit", nullable: false, defaultValue: true),
+                    ToggleOptionsEquityType = table.Column<bool>(type: "bit", nullable: false),
+                    ToggleSharePlan = table.Column<bool>(type: "bit", nullable: false),
+                    ExerciseRequestTaxValue = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_tbl_AppSetting", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "tbl_Broker",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    BrokerName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    EmailAddress = table.Column<string>(type: "nvarchar(150)", maxLength: 150, nullable: false),
+                    PhoneNumber = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: true),
+                    ContactPerson = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    Address = table.Column<string>(type: "nvarchar(150)", maxLength: 150, nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_tbl_Broker", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "tbl_CompanyInfo",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    LogoUrl = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    CompanyName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    CompanyCurrencyCode = table.Column<string>(type: "nvarchar(3)", maxLength: 3, nullable: false, defaultValue: "NGN"),
+                    Address = table.Column<string>(type: "nvarchar(150)", maxLength: 150, nullable: false),
+                    DomainName = table.Column<string>(type: "nvarchar(250)", maxLength: 250, nullable: false),
+                    NormalizedDomainName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false),
+                    ConnectionString = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_tbl_CompanyInfo", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "tbl_DividendPayoutRequest",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    DividendId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    EmployeeEmailAddress = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
+                    EmployeeName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    Amount = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
+                    Status = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    DeclineComment = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_tbl_DividendPayoutRequest", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "tbl_GenerateDividend",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    EquityId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    EquityName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    DividendPerShare = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
+                    TaxInPercentage = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_tbl_GenerateDividend", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "tbl_TransactionHistory",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    CompanyId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    UserUniqueId = table.Column<string>(type: "nvarchar(450)", maxLength: 450, nullable: true),
+                    UserEmailAddress = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    Source = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    Amount = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
+                    TransactionDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_tbl_TransactionHistory", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -430,17 +541,73 @@ namespace SHL.Repository.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "tbl_Dividend",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    GenerateDividendId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    EquityId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    EquityPlanName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    EmployeeEmailAddress = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
+                    EmployeeName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    OfferValue = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
+                    DividendValue = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
+                    UnClaimedAmount = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
+                    ClaimedAmount = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
+                    Status = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    TaxInPercentage = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_tbl_Dividend", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_tbl_Dividend_tbl_GenerateDividend_GenerateDividendId",
+                        column: x => x.GenerateDividendId,
+                        principalTable: "tbl_GenerateDividend",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "tbl_DividendTransactionHistory",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    DividendId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    EmployeeEmailAddress = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
+                    EmployeeName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    Amount = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
+                    TransactionDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_tbl_DividendTransactionHistory", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_tbl_DividendTransactionHistory_tbl_Dividend_DividendId",
+                        column: x => x.DividendId,
+                        principalTable: "tbl_Dividend",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Companies",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    CompanyName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    CompanyEmailAddress = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: true),
+                    LogoUrl = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    CompanyName = table.Column<string>(type: "nvarchar(150)", maxLength: 150, nullable: false),
                     CompanyCode = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     CompanyCurrencyCode = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     CompanySharePriceValuation = table.Column<double>(type: "float", nullable: false),
                     CompanyAddress = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     CompanyDomainName = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    CompanyTotalShareAmount = table.Column<double>(type: "float", nullable: true),
+                    CompanyTotalShareAmount = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
                     CompanyAvailableShareAmount = table.Column<double>(type: "float", nullable: true),
                     CompanyInfrastructureStatus = table.Column<int>(type: "int", nullable: true),
                     CompanyInfrastructureType = table.Column<int>(type: "int", nullable: true),
@@ -508,6 +675,33 @@ namespace SHL.Repository.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "EquityPlan",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    CompanyId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    PlanName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    TotalEquity = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
+                    Allocated = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
+                    UnAllocated = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
+                    PercentageTotalEquity = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
+                    PercentageAllocated = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
+                    EquityType = table.Column<int>(type: "int", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_EquityPlan", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_EquityPlan_Companies_CompanyId",
+                        column: x => x.CompanyId,
+                        principalTable: "Companies",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "OptionPools",
                 columns: table => new
                 {
@@ -532,6 +726,58 @@ namespace SHL.Repository.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "tbl_CompanyDepartment",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    CompanyId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Department = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    NormalizedDepartment = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_tbl_CompanyDepartment", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_tbl_CompanyDepartment_Companies_CompanyId",
+                        column: x => x.CompanyId,
+                        principalTable: "Companies",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "tbl_Shareholder",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    CompanyId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    CscsNumber = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
+                    ChnNumber = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
+                    BrokerId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    ShareHolderEmployeeId = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
+                    ShareholderPhoneNumber = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
+                    ShareholderName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
+                    ShareholderAddress = table.Column<string>(type: "nvarchar(150)", maxLength: 150, nullable: true),
+                    ShareholderEmailAddress = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: true),
+                    Holding = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
+                    PercentageHolding = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_tbl_Shareholder", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_tbl_Shareholder_Companies_CompanyId",
+                        column: x => x.CompanyId,
+                        principalTable: "Companies",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "tbl_Staff",
                 columns: table => new
                 {
@@ -541,6 +787,9 @@ namespace SHL.Repository.Migrations
                     StaffCode = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
                     StaffDepartment = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
                     StaffGrade = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
+                    CscsNumber = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
+                    ChnNumber = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
+                    Designation = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
                     StaffStatus = table.Column<int>(type: "int", nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
@@ -581,6 +830,68 @@ namespace SHL.Repository.Migrations
                         column: x => x.CompanySettingId,
                         principalTable: "CompanySettings",
                         principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ContractDocument",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    EquityPlanId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    DocumentName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    ContractDocumentType = table.Column<int>(type: "int", nullable: false),
+                    DocumentContentUrl = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    DocumentContent = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ContractDocument", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ContractDocument_EquityPlan_EquityPlanId",
+                        column: x => x.EquityPlanId,
+                        principalTable: "EquityPlan",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Offer",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    EquityPlanId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    OfferHolder = table.Column<string>(type: "nvarchar(150)", maxLength: 150, nullable: false, comment: "Fullname of the offer owner"),
+                    EquityHolderEmailAddress = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    EquityHolderUniqueId = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    OfferValue = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false, comment: "Ownership"),
+                    BalanceOfferValue = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
+                    EstimatedOfferValue = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false, comment: "Ownership in percentage"),
+                    VestStartDate = table.Column<DateTime>(type: "datetime2", nullable: false, comment: "date when vesting starts"),
+                    VestEndDate = table.Column<DateTime>(type: "datetime2", nullable: false, comment: "date when vesting ends"),
+                    VestingPeriod = table.Column<double>(type: "float", nullable: false, comment: "duration for vesting"),
+                    GrantDate = table.Column<DateTime>(type: "datetime2", nullable: false, comment: "date when record was added"),
+                    Status = table.Column<string>(type: "nvarchar(max)", nullable: false, comment: "such as awaiting, vesting, vested. Awaiting means offer while vesting and vested means Portfolio"),
+                    EquityPrice = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
+                    ExcercisePrice = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
+                    EstimatedValue = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
+                    IsOfferSigned = table.Column<bool>(type: "bit", nullable: false),
+                    SignatureUrl = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    SignedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    SignedOfferUrl = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Offer", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Offer_EquityPlan_EquityPlanId",
+                        column: x => x.EquityPlanId,
+                        principalTable: "EquityPlan",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -679,6 +990,93 @@ namespace SHL.Repository.Migrations
                         column: x => x.EmployeeStaffId,
                         principalTable: "tbl_Staff",
                         principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "tbl_StaffBank",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    StaffId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    BankName = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
+                    AccountNumber = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: true),
+                    AccountName = table.Column<string>(type: "nvarchar(150)", maxLength: 150, nullable: true),
+                    SwitfCode = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_tbl_StaffBank", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_tbl_StaffBank_tbl_Staff_StaffId",
+                        column: x => x.StaffId,
+                        principalTable: "tbl_Staff",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "tbl_ExcerciseRequest",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    OfferId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    HolderName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    HolderEmailAddress = table.Column<string>(type: "nvarchar(150)", maxLength: 150, nullable: false),
+                    PlanName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    PaymentReference = table.Column<string>(type: "nvarchar(450)", maxLength: 450, nullable: true),
+                    Amount = table.Column<int>(type: "int", nullable: false),
+                    ExercisePrice = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
+                    Tax = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
+                    TotalCost = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
+                    Status = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    DeclineReason = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_tbl_ExcerciseRequest", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_tbl_ExcerciseRequest_Offer_OfferId",
+                        column: x => x.OfferId,
+                        principalTable: "Offer",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "tbl_VestedShareTransfer",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    CompanyId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    HolderEmailAddress = table.Column<string>(type: "nvarchar(150)", maxLength: 150, nullable: false),
+                    HolderName = table.Column<string>(type: "nvarchar(150)", maxLength: 150, nullable: false),
+                    OfferId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    TransferValue = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
+                    CscsNumber = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
+                    ChnNumber = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
+                    BrokerId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    TransferDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ApprovalDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    ProcessedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    ReferenceNumber = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    Status = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    DeclineComment = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_tbl_VestedShareTransfer", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_tbl_VestedShareTransfer_Offer_OfferId",
+                        column: x => x.OfferId,
+                        principalTable: "Offer",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -844,6 +1242,11 @@ namespace SHL.Repository.Migrations
                     { "acac7fb6-7c4a-4da8-a22e-47caab9928a9", "2fca74f5-8568-4b34-ac21-5b8a91de0372", "Employee", "EMPLOYEE" }
                 });
 
+            migrationBuilder.InsertData(
+                table: "tbl_AppSetting",
+                columns: new[] { "Id", "AllowIncentive", "CanEmployeeTransferShares", "CreatedAt", "ExerciseRequestTaxValue", "ToggleOptionsEquityType", "ToggleRsuEquityType", "ToggleSharePlan", "UpdatedAt" },
+                values: new object[] { new Guid("820fbf71-5e1a-4bcc-8a22-be82309e1311"), false, false, new DateTime(2025, 3, 5, 0, 0, 0, 0, DateTimeKind.Unspecified), 0m, false, true, false, null });
+
             migrationBuilder.CreateIndex(
                 name: "IX_Companies_CompanySettingId",
                 table: "Companies",
@@ -865,9 +1268,19 @@ namespace SHL.Repository.Migrations
                 column: "CompanySubscriptionSubscriptionId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_ContractDocument_EquityPlanId",
+                table: "ContractDocument",
+                column: "EquityPlanId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_EmploymentDetails_EmployeeStaffId",
                 table: "EmploymentDetails",
                 column: "EmployeeStaffId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_EquityPlan_CompanyId",
+                table: "EquityPlan",
+                column: "CompanyId");
 
             migrationBuilder.CreateIndex(
                 name: "EmailIndex",
@@ -919,6 +1332,11 @@ namespace SHL.Repository.Migrations
                 column: "NotificationActivityNotificationId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Offer_EquityPlanId",
+                table: "Offer",
+                column: "EquityPlanId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_OptionHolders_OptionHolderGrantId",
                 table: "OptionHolders",
                 column: "OptionHolderGrantId");
@@ -964,6 +1382,31 @@ namespace SHL.Repository.Migrations
                 column: "CompanySettingId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_tbl_CompanyDepartment_CompanyId",
+                table: "tbl_CompanyDepartment",
+                column: "CompanyId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_tbl_Dividend_GenerateDividendId",
+                table: "tbl_Dividend",
+                column: "GenerateDividendId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_tbl_DividendTransactionHistory_DividendId",
+                table: "tbl_DividendTransactionHistory",
+                column: "DividendId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_tbl_ExcerciseRequest_OfferId",
+                table: "tbl_ExcerciseRequest",
+                column: "OfferId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_tbl_Shareholder_CompanyId",
+                table: "tbl_Shareholder",
+                column: "CompanyId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_tbl_Staff_CompanyId",
                 table: "tbl_Staff",
                 column: "CompanyId");
@@ -972,6 +1415,18 @@ namespace SHL.Repository.Migrations
                 name: "IX_tbl_Staff_CompanyUserId",
                 table: "tbl_Staff",
                 column: "CompanyUserId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_tbl_StaffBank_StaffId",
+                table: "tbl_StaffBank",
+                column: "StaffId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_tbl_VestedShareTransfer_OfferId",
+                table: "tbl_VestedShareTransfer",
+                column: "OfferId",
                 unique: true);
 
             migrationBuilder.CreateIndex(
@@ -1017,6 +1472,9 @@ namespace SHL.Repository.Migrations
                 name: "Contacts");
 
             migrationBuilder.DropTable(
+                name: "ContractDocument");
+
+            migrationBuilder.DropTable(
                 name: "EmploymentDetails");
 
             migrationBuilder.DropTable(
@@ -1036,6 +1494,9 @@ namespace SHL.Repository.Migrations
 
             migrationBuilder.DropTable(
                 name: "ExcerciseSettings");
+
+            migrationBuilder.DropTable(
+                name: "FakeUsers");
 
             migrationBuilder.DropTable(
                 name: "Invitations");
@@ -1062,10 +1523,40 @@ namespace SHL.Repository.Migrations
                 name: "SettingValue");
 
             migrationBuilder.DropTable(
-                name: "Shareholders");
+                name: "Surveys");
 
             migrationBuilder.DropTable(
-                name: "Surveys");
+                name: "tbl_AppSetting");
+
+            migrationBuilder.DropTable(
+                name: "tbl_Broker");
+
+            migrationBuilder.DropTable(
+                name: "tbl_CompanyDepartment");
+
+            migrationBuilder.DropTable(
+                name: "tbl_CompanyInfo");
+
+            migrationBuilder.DropTable(
+                name: "tbl_DividendPayoutRequest");
+
+            migrationBuilder.DropTable(
+                name: "tbl_DividendTransactionHistory");
+
+            migrationBuilder.DropTable(
+                name: "tbl_ExcerciseRequest");
+
+            migrationBuilder.DropTable(
+                name: "tbl_Shareholder");
+
+            migrationBuilder.DropTable(
+                name: "tbl_StaffBank");
+
+            migrationBuilder.DropTable(
+                name: "tbl_TransactionHistory");
+
+            migrationBuilder.DropTable(
+                name: "tbl_VestedShareTransfer");
 
             migrationBuilder.DropTable(
                 name: "Tokens");
@@ -1089,10 +1580,22 @@ namespace SHL.Repository.Migrations
                 name: "Notifications");
 
             migrationBuilder.DropTable(
+                name: "tbl_Dividend");
+
+            migrationBuilder.DropTable(
+                name: "Offer");
+
+            migrationBuilder.DropTable(
                 name: "OptionHolders");
 
             migrationBuilder.DropTable(
                 name: "VestingSchedules");
+
+            migrationBuilder.DropTable(
+                name: "tbl_GenerateDividend");
+
+            migrationBuilder.DropTable(
+                name: "EquityPlan");
 
             migrationBuilder.DropTable(
                 name: "tbl_Staff");

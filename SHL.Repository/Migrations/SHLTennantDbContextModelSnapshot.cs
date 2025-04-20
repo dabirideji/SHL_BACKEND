@@ -3,7 +3,6 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
-using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SHL.Repository.Data.Context;
 
@@ -12,11 +11,9 @@ using SHL.Repository.Data.Context;
 namespace SHL.Repository.Migrations
 {
     [DbContext(typeof(SHLTennantDbContext))]
-    [Migration("20250218111720_tbl_Offer_BalanceOfferValue")]
-    partial class tbl_Offer_BalanceOfferValue
+    partial class SHLTennantDbContextModelSnapshot : ModelSnapshot
     {
-        /// <inheritdoc />
-        protected override void BuildTargetModel(ModelBuilder modelBuilder)
+        protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -174,6 +171,57 @@ namespace SHL.Repository.Migrations
                     b.ToTable("EquityPlanUserToken", (string)null);
                 });
 
+            modelBuilder.Entity("SHL.Domain.Models.AppSetting", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("AllowIncentive")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("CanEmployeeTransferShares")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<decimal>("ExerciseRequestTaxValue")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<bool>("ToggleOptionsEquityType")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("ToggleRsuEquityType")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true);
+
+                    b.Property<bool>("ToggleSharePlan")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("tbl_AppSetting", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("820fbf71-5e1a-4bcc-8a22-be82309e1311"),
+                            AllowIncentive = false,
+                            CanEmployeeTransferShares = false,
+                            CreatedAt = new DateTime(2025, 3, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ExerciseRequestTaxValue = 0m,
+                            ToggleOptionsEquityType = false,
+                            ToggleRsuEquityType = true,
+                            ToggleSharePlan = false
+                        });
+                });
+
             modelBuilder.Entity("SHL.Domain.Models.AuditLog", b =>
                 {
                     b.Property<Guid>("Id")
@@ -213,6 +261,46 @@ namespace SHL.Repository.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("AuditLogs");
+                });
+
+            modelBuilder.Entity("SHL.Domain.Models.Broker", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Address")
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
+
+                    b.Property<string>("BrokerName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("ContactPerson")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("EmailAddress")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
+
+                    b.Property<string>("PhoneNumber")
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("tbl_Broker", (string)null);
                 });
 
             modelBuilder.Entity("SHL.Domain.Models.Company", b =>
@@ -309,6 +397,90 @@ namespace SHL.Repository.Migrations
                     b.ToTable("CompanyDatabaseConnections");
                 });
 
+            modelBuilder.Entity("SHL.Domain.Models.CompanyDepartment", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("CompanyId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Department")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("NormalizedDepartment")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CompanyId");
+
+                    b.ToTable("tbl_CompanyDepartment", (string)null);
+                });
+
+            modelBuilder.Entity("SHL.Domain.Models.CompanyInfo", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Address")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
+
+                    b.Property<string>("CompanyCurrencyCode")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(3)
+                        .HasColumnType("nvarchar(3)")
+                        .HasDefaultValue("NGN");
+
+                    b.Property<string>("CompanyName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("ConnectionString")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("DomainName")
+                        .IsRequired()
+                        .HasMaxLength(250)
+                        .HasColumnType("nvarchar(250)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("LogoUrl")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("NormalizedDomainName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("tbl_CompanyInfo", (string)null);
+                });
+
             modelBuilder.Entity("SHL.Domain.Models.CompanySetting", b =>
                 {
                     b.Property<Guid>("Id")
@@ -399,6 +571,9 @@ namespace SHL.Repository.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
+                    b.Property<bool>("IsAdmin")
+                        .HasColumnType("bit");
+
                     b.Property<string>("LastName")
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
@@ -429,6 +604,13 @@ namespace SHL.Repository.Migrations
 
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("StaffStatus")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)")
+                        .HasDefaultValue("ACTIVE");
 
                     b.Property<bool>("TwoFactorEnabled")
                         .HasColumnType("bit");
@@ -539,6 +721,153 @@ namespace SHL.Repository.Migrations
                     b.ToTable("ContractDocument", (string)null);
                 });
 
+            modelBuilder.Entity("SHL.Domain.Models.Dividend", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<decimal>("ClaimedAmount")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<decimal>("DividendValue")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("EmployeeEmailAddress")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<string>("EmployeeName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<Guid>("EquityId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("EquityPlanName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<Guid>("GenerateDividendId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<decimal>("OfferValue")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<decimal>("TaxInPercentage")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("UnClaimedAmount")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("GenerateDividendId");
+
+                    b.ToTable("tbl_Dividend", (string)null);
+                });
+
+            modelBuilder.Entity("SHL.Domain.Models.DividendPayoutRequest", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<decimal>("Amount")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("DeclineComment")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<Guid>("DividendId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("EmployeeEmailAddress")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<string>("EmployeeName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("tbl_DividendPayoutRequest", (string)null);
+                });
+
+            modelBuilder.Entity("SHL.Domain.Models.DividendTransactionHistory", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<decimal>("Amount")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("DividendId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("EmployeeEmailAddress")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<string>("EmployeeName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime>("TransactionDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DividendId");
+
+                    b.ToTable("tbl_DividendTransactionHistory", (string)null);
+                });
+
             modelBuilder.Entity("SHL.Domain.Models.EmploymentDetail", b =>
                 {
                     b.Property<Guid>("Id")
@@ -629,6 +958,71 @@ namespace SHL.Repository.Migrations
                     b.ToTable("EquityPlan", (string)null);
                 });
 
+            modelBuilder.Entity("SHL.Domain.Models.ExcerciseRequest", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("Amount")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("DeclineReason")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<decimal>("ExercisePrice")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("HolderEmailAddress")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
+
+                    b.Property<string>("HolderName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<Guid>("OfferId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("PaymentReference")
+                        .HasMaxLength(450)
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("PlanName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<decimal>("Tax")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("TotalCost")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("OfferId");
+
+                    b.ToTable("tbl_ExcerciseRequest", (string)null);
+                });
+
             modelBuilder.Entity("SHL.Domain.Models.ExcerciseSetting", b =>
                 {
                     b.Property<Guid>("Id")
@@ -662,6 +1056,64 @@ namespace SHL.Repository.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("ExcerciseSettings");
+                });
+
+            modelBuilder.Entity("SHL.Domain.Models.FakeUser", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("FakeUsers");
+                });
+
+            modelBuilder.Entity("SHL.Domain.Models.GenerateDividend", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<decimal>("DividendPerShare")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<Guid>("EquityId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("EquityName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<decimal>("TaxInPercentage")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("tbl_GenerateDividend", (string)null);
                 });
 
             modelBuilder.Entity("SHL.Domain.Models.Grant", b =>
@@ -1203,36 +1655,59 @@ namespace SHL.Repository.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("CompanyCode")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<Guid?>("BrokerId")
+                        .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("CompanyName")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<string>("ChnNumber")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<Guid>("CompanyId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("CscsNumber")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<decimal>("Holding")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("PercentageHolding")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("ShareHolderEmployeeId")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
                     b.Property<string>("ShareholderAddress")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
 
                     b.Property<string>("ShareholderEmailAddress")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
 
                     b.Property<string>("ShareholderName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ShareholderNumber")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<string>("ShareholderPhoneNumber")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");
 
-                    b.ToTable("Shareholders");
+                    b.HasIndex("CompanyId");
+
+                    b.ToTable("tbl_Shareholder", (string)null);
                 });
 
             modelBuilder.Entity("SHL.Domain.Models.Staff", b =>
@@ -1240,6 +1715,10 @@ namespace SHL.Repository.Migrations
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("ChnNumber")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<Guid>("CompanyId")
                         .HasMaxLength(100)
@@ -1252,6 +1731,14 @@ namespace SHL.Repository.Migrations
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
+
+                    b.Property<string>("CscsNumber")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("Designation")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<string>("StaffCode")
                         .HasMaxLength(100)
@@ -1279,6 +1766,45 @@ namespace SHL.Repository.Migrations
                         .IsUnique();
 
                     b.ToTable("tbl_Staff", (string)null);
+                });
+
+            modelBuilder.Entity("SHL.Domain.Models.StaffBank", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("AccountName")
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
+
+                    b.Property<string>("AccountNumber")
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<string>("BankName")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("StaffId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("SwitfCode")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("StaffId")
+                        .IsUnique();
+
+                    b.ToTable("tbl_StaffBank", (string)null);
                 });
 
             modelBuilder.Entity("SHL.Domain.Models.Subscription", b =>
@@ -1409,7 +1935,6 @@ namespace SHL.Repository.Migrations
                         .HasColumnType("nvarchar(200)");
 
                     b.Property<string>("UserUniqueId")
-                        .IsRequired()
                         .HasMaxLength(450)
                         .HasColumnType("nvarchar(450)");
 
@@ -1453,7 +1978,7 @@ namespace SHL.Repository.Migrations
                     b.Property<DateTime?>("ApprovalDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<Guid>("BrokerId")
+                    b.Property<Guid?>("BrokerId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("ChnNumber")
@@ -1467,11 +1992,19 @@ namespace SHL.Repository.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("CscsNumber")
-                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("DeclineComment")
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
                     b.Property<string>("HolderEmailAddress")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
+
+                    b.Property<string>("HolderName")
                         .IsRequired()
                         .HasMaxLength(150)
                         .HasColumnType("nvarchar(150)");
@@ -1503,6 +2036,9 @@ namespace SHL.Repository.Migrations
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("OfferId")
+                        .IsUnique();
 
                     b.ToTable("tbl_VestedShareTransfer", (string)null);
                 });
@@ -1717,6 +2253,17 @@ namespace SHL.Repository.Migrations
                     b.Navigation("CompanySetting");
                 });
 
+            modelBuilder.Entity("SHL.Domain.Models.CompanyDepartment", b =>
+                {
+                    b.HasOne("SHL.Domain.Models.Company", "Company")
+                        .WithMany("Departments")
+                        .HasForeignKey("CompanyId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Company");
+                });
+
             modelBuilder.Entity("SHL.Domain.Models.CompanySetting", b =>
                 {
                     b.HasOne("SHL.Domain.Models.Company", "Company")
@@ -1758,6 +2305,28 @@ namespace SHL.Repository.Migrations
                     b.Navigation("EquityPlan");
                 });
 
+            modelBuilder.Entity("SHL.Domain.Models.Dividend", b =>
+                {
+                    b.HasOne("SHL.Domain.Models.GenerateDividend", "GenerateDividend")
+                        .WithMany("Dividends")
+                        .HasForeignKey("GenerateDividendId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("GenerateDividend");
+                });
+
+            modelBuilder.Entity("SHL.Domain.Models.DividendTransactionHistory", b =>
+                {
+                    b.HasOne("SHL.Domain.Models.Dividend", "Dividend")
+                        .WithMany("DividendTransactionHistories")
+                        .HasForeignKey("DividendId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Dividend");
+                });
+
             modelBuilder.Entity("SHL.Domain.Models.EmploymentDetail", b =>
                 {
                     b.HasOne("SHL.Domain.Models.Staff", "EmployeeStaffData")
@@ -1776,6 +2345,17 @@ namespace SHL.Repository.Migrations
                         .IsRequired();
 
                     b.Navigation("Company");
+                });
+
+            modelBuilder.Entity("SHL.Domain.Models.ExcerciseRequest", b =>
+                {
+                    b.HasOne("SHL.Domain.Models.Offer", "Offer")
+                        .WithMany("ExcerciseRequests")
+                        .HasForeignKey("OfferId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Offer");
                 });
 
             modelBuilder.Entity("SHL.Domain.Models.Grant", b =>
@@ -1886,6 +2466,17 @@ namespace SHL.Repository.Migrations
                         .HasForeignKey("CompanySettingId");
                 });
 
+            modelBuilder.Entity("SHL.Domain.Models.Shareholder", b =>
+                {
+                    b.HasOne("SHL.Domain.Models.Company", "Company")
+                        .WithMany("Shareholders")
+                        .HasForeignKey("CompanyId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Company");
+                });
+
             modelBuilder.Entity("SHL.Domain.Models.Staff", b =>
                 {
                     b.HasOne("SHL.Domain.Models.Company", "Company")
@@ -1903,6 +2494,28 @@ namespace SHL.Repository.Migrations
                     b.Navigation("Company");
 
                     b.Navigation("CompanyUser");
+                });
+
+            modelBuilder.Entity("SHL.Domain.Models.StaffBank", b =>
+                {
+                    b.HasOne("SHL.Domain.Models.Staff", "Staff")
+                        .WithOne("Bank")
+                        .HasForeignKey("SHL.Domain.Models.StaffBank", "StaffId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Staff");
+                });
+
+            modelBuilder.Entity("SHL.Domain.Models.VestedShareTransfer", b =>
+                {
+                    b.HasOne("SHL.Domain.Models.Offer", "Offer")
+                        .WithOne("VestedShareTransfer")
+                        .HasForeignKey("SHL.Domain.Models.VestedShareTransfer", "OfferId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Offer");
                 });
 
             modelBuilder.Entity("SHL.Domain.Models.VestingActivation", b =>
@@ -1935,7 +2548,11 @@ namespace SHL.Repository.Migrations
                 {
                     b.Navigation("CompanySubscriptions");
 
+                    b.Navigation("Departments");
+
                     b.Navigation("EquityPlans");
+
+                    b.Navigation("Shareholders");
 
                     b.Navigation("Staffs");
                 });
@@ -1950,6 +2567,11 @@ namespace SHL.Repository.Migrations
                     b.Navigation("Staff");
                 });
 
+            modelBuilder.Entity("SHL.Domain.Models.Dividend", b =>
+                {
+                    b.Navigation("DividendTransactionHistories");
+                });
+
             modelBuilder.Entity("SHL.Domain.Models.EquityPlan", b =>
                 {
                     b.Navigation("ContractDocuments");
@@ -1957,11 +2579,23 @@ namespace SHL.Repository.Migrations
                     b.Navigation("Offers");
                 });
 
+            modelBuilder.Entity("SHL.Domain.Models.GenerateDividend", b =>
+                {
+                    b.Navigation("Dividends");
+                });
+
             modelBuilder.Entity("SHL.Domain.Models.Grant", b =>
                 {
                     b.Navigation("GrantVestingSchedules");
 
                     b.Navigation("TargetOptionHolders");
+                });
+
+            modelBuilder.Entity("SHL.Domain.Models.Offer", b =>
+                {
+                    b.Navigation("ExcerciseRequests");
+
+                    b.Navigation("VestedShareTransfer");
                 });
 
             modelBuilder.Entity("SHL.Domain.Models.OptionHolder", b =>
@@ -1972,6 +2606,12 @@ namespace SHL.Repository.Migrations
             modelBuilder.Entity("SHL.Domain.Models.OptionPool", b =>
                 {
                     b.Navigation("OptionPoolApprovals");
+                });
+
+            modelBuilder.Entity("SHL.Domain.Models.Staff", b =>
+                {
+                    b.Navigation("Bank")
+                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }
