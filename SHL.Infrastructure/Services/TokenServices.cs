@@ -33,15 +33,15 @@ namespace SHL.Infrastructure.Services
                 {
                     new Claim(ClaimTypes.Name, user.UserName),
                     new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-                    new Claim(ClaimTypes.Email, user.Email),
-                    new Claim(ClaimTypes.MobilePhone,user?.PhoneNumber),
-                    new Claim("CompanyId",user?.CompanyId.ToString()),
+                    new Claim(ClaimTypes.Email, user.Email??"",""),
+                    new Claim(ClaimTypes.MobilePhone,user?.PhoneNumber?? "",""),
+                    new Claim("CompanyId",user?.CompanyId.ToString()??null,null),
 
                 };
                 await userManager.AddClaimsAsync(user, claims);
             }
 
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["JwtConfig:Key"]));
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["JWTCredentials:SecretKey"]));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
 
 

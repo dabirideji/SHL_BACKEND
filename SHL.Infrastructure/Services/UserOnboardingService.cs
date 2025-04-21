@@ -42,7 +42,7 @@ namespace SHL.Infrastructure.Services
             {
                 user =new ApplicationUser()
                 {
-                    LastName=userModel.FullName,
+                    FullName=userModel.FullName,
                     UserName = userModel.EmailOrPhoneNumber,
                     Email = userModel.EmailOrPhoneNumber,
                 };
@@ -51,7 +51,7 @@ namespace SHL.Infrastructure.Services
             {
                 user = new ApplicationUser
                 {
-                    LastName = userModel.FullName,
+                    FullName = userModel.FullName,
                     UserName = userModel.EmailOrPhoneNumber,
                     PhoneNumber ="234"+ userModel.EmailOrPhoneNumber,
                 };
@@ -64,9 +64,9 @@ namespace SHL.Infrastructure.Services
             }
             else
             {
-                var otp = await userManager.GenerateTwoFactorTokenAsync(user, AppTokenProvider.TotpProvider);
+               // var otp = await userManager.GenerateTwoFactorTokenAsync(user, AppTokenProvider.TotpProvider);
                 //send OTP
-                await emailService.SendMail(user.Email, otp, "SHL OTP");
+               // await emailService.SendMail(user.Email, otp, "SHL OTP");
 
                 var userData = await UserResponses(user);
                 return userData;
@@ -81,7 +81,7 @@ namespace SHL.Infrastructure.Services
             {
                 user = new ApplicationUser()
                 {
-                    LastName = userModel.FullName,
+                    FullName = userModel.FullName,
                     UserName = userModel.EmailOrPhoneNumber,
                     Email = userModel.EmailOrPhoneNumber,
                 };
@@ -90,7 +90,7 @@ namespace SHL.Infrastructure.Services
             {
                 user = new ApplicationUser
                 {
-                    LastName = userModel.FullName,
+                    FullName = userModel.FullName,
                     UserName = userModel.EmailOrPhoneNumber,
                     PhoneNumber = "234" + userModel.EmailOrPhoneNumber,
 
@@ -121,7 +121,7 @@ namespace SHL.Infrastructure.Services
             {
                 user = new ApplicationUser()
                 {
-                    LastName = userModel.FullName,
+                    FullName = userModel.FullName,
                     UserName = userModel.EmailOrPhoneNumber,
                     CompanyId = userModel.CompanyId,
                     Email = userModel.EmailOrPhoneNumber,
@@ -131,7 +131,7 @@ namespace SHL.Infrastructure.Services
             {
                 user = new ApplicationUser
                 {
-                    LastName = userModel.FullName,
+                    FullName = userModel.FullName,
                     UserName = userModel.EmailOrPhoneNumber,
                     CompanyId = userModel.CompanyId,
                     PhoneNumber = "234" + userModel.EmailOrPhoneNumber,
@@ -162,7 +162,7 @@ namespace SHL.Infrastructure.Services
             {
                 user = new ApplicationUser()
                 {
-                    LastName = userModel.FullName,
+                    FullName = userModel.FullName,
                     UserName = userModel.EmailOrPhoneNumber,
                     CompanyId = userModel.CompanyId,
                     Email = userModel.EmailOrPhoneNumber,
@@ -174,7 +174,7 @@ namespace SHL.Infrastructure.Services
             {
                 user = new ApplicationUser
                 {
-                    LastName = userModel.FullName,
+                    FullName = userModel.FullName,
                     UserName = userModel.EmailOrPhoneNumber,
                     CompanyId = userModel.CompanyId,
                     PhoneNumber = "234" + userModel.EmailOrPhoneNumber,
@@ -291,8 +291,7 @@ namespace SHL.Infrastructure.Services
             var registeredModel = new UserResponseDTO
             {
                 phone_number = user.PhoneNumber,
-                first_name = user?.FirstName,
-                last_name = user?.LastName,
+                last_name = user?.FullName,
                 email = user.Email,
                 isAdmin = user.IsAdmin,
                 company_id = user.CompanyId,
