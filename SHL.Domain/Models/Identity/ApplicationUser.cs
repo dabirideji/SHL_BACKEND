@@ -2,16 +2,11 @@
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Identity;
 
-namespace CSL.Models.Identity
+namespace SHL.Domain.Models.Identity
 {
 
     public class ApplicationUser : IdentityUser
     {
-
-        public ApplicationUser()
-        {
-            UserDevices = new HashSet<UserDevice>();
-        }
 
         public string FirstName { get; set; }
         public string LastName { get; set; }
@@ -25,8 +20,6 @@ namespace CSL.Models.Identity
         public string ApiSessionId { get; set; }
         public string LastComputerName { get; set; }
 
-
-        public virtual ICollection<UserDevice> UserDevices { get; set; }
 
     }
 
