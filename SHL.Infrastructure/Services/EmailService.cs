@@ -3,6 +3,8 @@ using System.Net;
 using System.Net.Http;
 using System.Net.Mail;
 using CSL.Models.Identity;
+using Microsoft.Extensions.Logging;
+using SHL.Application.DTO.SendEmail;
 using SHL.Application.IServices;
 
 namespace SHL.Infrastructure.Services
@@ -13,25 +15,44 @@ namespace SHL.Infrastructure.Services
         private readonly int smtpPort = 587;
         private readonly string smtpUsername = "Efezeino@gmail.com";
         private readonly string smtpPassword = "SHL";
+        private readonly ILogger<EmailService> _logger;
 
-        public async Task<bool> SendMail([EmailAddress] string mail, [Required] string messageBody, [Required] string subject)
+        public EmailService(ILogger<EmailService> logger)
         {
-            MailMessage m = new MailMessage();
-            m.From = new MailAddress("Efezeino@gmail.com", "SHL");
-            m.To.Add(mail);
-            m.Body = messageBody;
-            m.Subject = subject;
-            m.ReplyToList.Add("NoReply@noreply.com");
+            _logger = logger;
+        }
+        public async Task<bool> SendMail(EmailDto dto)
+        {
+            try
+            {
+                using (var smtpClient = new SmtpClient(smtpServer, smtpPort))
+                {
+                    smtpClient.Credentials = new NetworkCredential(smtpUsername, smtpPassword);
+                    smtpClient.EnableSsl = true;
 
-            SmtpClient sm = new SmtpClient("smtp.gmail.com");
+                    using (var mailMessage = new MailMessage())
+                    {
+                        mailMessage.From = new MailAddress(smtpUsername, "SHL");
+                        mailMessage.To.Add(dto.mail);
+                        mailMessage.Subject = dto.subject;
+                        mailMessage.Body = dto.messageBody;
+                        mailMessage.ReplyToList.Add(new MailAddress("NoReply@noreply.com"));
+                        mailMessage.IsBodyHtml = true;
 
-            // Additional SMTP configuration is required here
-            await sm.SendMailAsync(m);
+                        await smtpClient.SendMailAsync(mailMessage);
+                    }
+                }
 
-            return true;
+                return true;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error sending email");
+                return false;
+            }
         }
 
-        public async Task<bool> SendMailWithAttachmentAsync([EmailAddress] string mail, [Required] string messageBody, [Required] string subject, List<Attachment> attachments)
+        public async Task<bool> SendMailWithAttachmentAsync(EmailDto dto)
         {
             try
             {
@@ -43,15 +64,15 @@ namespace SHL.Infrastructure.Services
                     using (var mailMessage = new MailMessage())
                     {
                         mailMessage.From = new MailAddress(smtpUsername);
-                        mailMessage.To.Add(mail);
-                        mailMessage.Subject = subject;
-                        mailMessage.Body = messageBody;
+                        mailMessage.To.Add(dto.mail);
+                        mailMessage.Subject = dto.subject;
+                        mailMessage.Body = dto.messageBody;
                         mailMessage.IsBodyHtml = true;
 
                         // Attach files if provided
-                        if (attachments != null && attachments.Any())
+                        if (dto.attachments != null && dto.attachments.Any())
                         {
-                            foreach (var attachment in attachments)
+                            foreach (var attachment in dto.attachments)
                             {
                                 mailMessage.Attachments.Add(attachment);
                             }
@@ -65,8 +86,8 @@ namespace SHL.Infrastructure.Services
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error sending email: {ex.Message}");
-                throw;
+                _logger.LogError(ex, "Error sending email");
+                return false;
             }
         }
 

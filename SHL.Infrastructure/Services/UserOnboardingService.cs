@@ -1,9 +1,11 @@
 ﻿using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using SHL.Application.CustomExceptions;
 using SHL.Application.DTO.Identity;
+using SHL.Application.DTO.SendEmail;
 using SHL.Application.IServices;
 using SHL.Application.TokenProviders;
 using SHL.Domain.Models.Identity;
@@ -45,6 +47,7 @@ namespace SHL.Infrastructure.Services
                     FullName=userModel.FullName,
                     UserName = userModel.EmailOrPhoneNumber,
                     Email = userModel.EmailOrPhoneNumber,
+                    EmailConfirmed=true
                 };
             }
             else if (fetchEmailOrPhone == "PhoneNumber")
@@ -54,6 +57,7 @@ namespace SHL.Infrastructure.Services
                     FullName = userModel.FullName,
                     UserName = userModel.EmailOrPhoneNumber,
                     PhoneNumber ="234"+ userModel.EmailOrPhoneNumber,
+                    EmailConfirmed = true
                 };
             }
             var result = await userManager.CreateAsync(user, userModel.Password);
@@ -64,54 +68,22 @@ namespace SHL.Infrastructure.Services
             }
             else
             {
-               // var otp = await userManager.GenerateTwoFactorTokenAsync(user, AppTokenProvider.TotpProvider);
+                var otp = await userManager.GenerateTwoFactorTokenAsync(user, "Custom");
                 //send OTP
-               // await emailService.SendMail(user.Email, otp, "SHL OTP");
+                //if (fetchEmailOrPhone == "Email")
+                //{
+                //    var emailSender = new EmailDto();
+                //    emailSender.mail = user.Email;
+                //    emailSender.messageBody = "Your one time code is " + otp;
+                //    emailSender.subject = "One Time Password";
 
+                //    await emailService.SendMail(emailSender);
+                //}
                 var userData = await UserResponses(user);
                 return userData;
             }
         }
-        public async Task<UserResponseDTO> CreateUserAsRetailAsync(CreateUserAsRetailDTO userModel)
-        {
-            var user = new ApplicationUser();
-            string email = string.Empty; string phonenumber = string.Empty;
-            var fetchEmailOrPhone = EstractEmailOrPhoneNumber(userModel.EmailOrPhoneNumber);
-            if (fetchEmailOrPhone == "Email")
-            {
-                user = new ApplicationUser()
-                {
-                    FullName = userModel.FullName,
-                    UserName = userModel.EmailOrPhoneNumber,
-                    Email = userModel.EmailOrPhoneNumber,
-                };
-            }
-            else if (fetchEmailOrPhone == "PhoneNumber")
-            {
-                user = new ApplicationUser
-                {
-                    FullName = userModel.FullName,
-                    UserName = userModel.EmailOrPhoneNumber,
-                    PhoneNumber = "234" + userModel.EmailOrPhoneNumber,
-
-                };
-            }
-            var result = await userManager.CreateAsync(user, userModel.Password);
-            if (result.Succeeded == false)
-            {
-                ApiException.ClientError("FAILED TO CREATE USER", 400, new { result });
-                return null;
-            }
-            else
-            {
-                var otp = await userManager.GenerateTwoFactorTokenAsync(user, AppTokenProvider.TotpProvider);
-                //send OTP
-                await emailService.SendMail(user.Email, otp, "SHL OTP");
-
-                var userData = await UserResponses(user);
-                return userData;
-            }
-        }
+        
         public async Task<UserResponseDTO> CreateUserAsInstitutionalAsync(CreateUserAsInstitutionDTO userModel)
         {
             var user = new ApplicationUser();
@@ -125,6 +97,7 @@ namespace SHL.Infrastructure.Services
                     UserName = userModel.EmailOrPhoneNumber,
                     CompanyId = userModel.CompanyId,
                     Email = userModel.EmailOrPhoneNumber,
+                    EmailConfirmed = true
                 };
             }
             else if (fetchEmailOrPhone == "PhoneNumber")
@@ -135,6 +108,7 @@ namespace SHL.Infrastructure.Services
                     UserName = userModel.EmailOrPhoneNumber,
                     CompanyId = userModel.CompanyId,
                     PhoneNumber = "234" + userModel.EmailOrPhoneNumber,
+                    EmailConfirmed = true
                 };
             }
             var result = await userManager.CreateAsync(user, userModel.Password);
@@ -147,8 +121,15 @@ namespace SHL.Infrastructure.Services
             {
                 var otp = await userManager.GenerateTwoFactorTokenAsync(user, AppTokenProvider.TotpProvider);
                 //send OTP
-                await emailService.SendMail(user.Email, otp, "SHL OTP");
+                if (fetchEmailOrPhone == "Email")
+                {
+                    var emailSender = new EmailDto();
+                    emailSender.mail = user.Email;
+                    emailSender.messageBody = "Your one time code is " + otp;
+                    emailSender.subject = "One Time Password";
 
+                    await emailService.SendMail(emailSender);
+                }
                 var userData = await UserResponses(user);
                 return userData;
             }
@@ -167,7 +148,7 @@ namespace SHL.Infrastructure.Services
                     CompanyId = userModel.CompanyId,
                     Email = userModel.EmailOrPhoneNumber,
                     SubsidiaryId=userModel.BusinessCategoryId,
-                    IsAdmin = userModel.IsAdmin,
+                    EmailConfirmed = true
                 };
             }
             else if (fetchEmailOrPhone == "PhoneNumber")
@@ -179,6 +160,7 @@ namespace SHL.Infrastructure.Services
                     CompanyId = userModel.CompanyId,
                     PhoneNumber = "234" + userModel.EmailOrPhoneNumber,
                     SubsidiaryId = userModel.BusinessCategoryId,
+                    EmailConfirmed = true
                 };
             }
             var result = await userManager.CreateAsync(user, userModel.Password);
@@ -191,8 +173,15 @@ namespace SHL.Infrastructure.Services
             {
                 var otp = await userManager.GenerateTwoFactorTokenAsync(user, AppTokenProvider.TotpProvider);
                 //send OTP
-                await emailService.SendMail(user.Email, otp, "SHL OTP");
+                if (fetchEmailOrPhone == "Email")
+                {
+                    var emailSender = new EmailDto();
+                    emailSender.mail = user.Email;
+                    emailSender.messageBody = "Your one time code is " + otp;
+                    emailSender.subject = "One Time Password";
 
+                    await emailService.SendMail(emailSender);
+                }
                 var userData = await UserResponses(user);
                 return userData;
             }
@@ -206,7 +195,7 @@ namespace SHL.Infrastructure.Services
                 ApiException.ClientError("USER NOT FOUND", 404, new { user });
             }
             var result = await signInManager.CheckPasswordSignInAsync(user, userModel.Password, false);
-            if (result.Succeeded == false)
+            if (!result.Succeeded)
             {
                 ApiException.ClientError("LOGIN FAILED", 400, new { result });
                 return null;
@@ -224,7 +213,12 @@ namespace SHL.Infrastructure.Services
                 ApiException.ClientError("USER NOT FOUND", 404, new { user });
             }
             var otp = await userManager.GenerateTwoFactorTokenAsync(user, AppTokenProvider.TotpProvider);
-            var sendotp= await emailService.SendMail(user.Email, otp, "SHL OTP");
+            var emailSender = new EmailDto();
+            emailSender.mail = user.Email;
+            emailSender.messageBody = "Your one time code is " + otp;
+            emailSender.subject = "One Time Password";
+
+            var sendotp= await emailService.SendMail(emailSender);
             if (sendotp == false)
             {
 
@@ -262,10 +256,10 @@ namespace SHL.Infrastructure.Services
         {
             throw new NotImplementedException();
         }
-        public async Task<bool> VerifyOtp(string otp)
+        public async Task<bool> VerifyOtp(VerifyOtpDto model)
         {
             var user = await userManager.FindByIdAsync(userIdentityService.SubjectId.ToString());
-            var result = await userManager.VerifyTwoFactorTokenAsync(user, AppTokenProvider.TotpProvider, otp);
+            var result = await userManager.VerifyTwoFactorTokenAsync(user, "Custom", model.otp);
             if (result==false)
             {
                 ApiException.ClientError("UNABLE TO VERIFY OTP", 400);

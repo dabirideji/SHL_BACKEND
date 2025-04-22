@@ -21,12 +21,6 @@ namespace SHL.IdentityServer.Api.Controllers
             var result=await userOnboardingService.CreateUserAsIndividualAsync(userDTO);
             return Ok(result);
         }
-        //[HttpPost("SignUpAsRetail")]
-        //public async ValueTask<IActionResult> SignUpAsRetail([FromBody] CreateUserAsRetailDTO userDTO)
-        //{
-        //    var result = await userOnboardingService.CreateUserAsRetailAsync(userDTO);
-        //    return Ok(result);
-        //}
         [HttpPost("SignUpAsInstitution")]
         public async ValueTask<IActionResult> SignUpAsInstitution([FromBody] CreateUserAsInstitutionDTO userDTO)
         {
@@ -55,6 +49,12 @@ namespace SHL.IdentityServer.Api.Controllers
         public async ValueTask<IActionResult> ResetPassword([FromBody] ResetPasswordDTO userDTO)
         {
             var result = await userOnboardingService.ResetPasswordAsync(userDTO);
+            return Ok(result);
+        }
+        [HttpPost("VerifyOtp")]
+        public async ValueTask<IActionResult> VerifyOtp([FromBody] VerifyOtpDto userDTO)
+        {
+            var result = await userOnboardingService.VerifyOtp(userDTO);
             return Ok(result);
         }
     }

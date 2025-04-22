@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using SHL.Application.TokenProviders;
 using SHL.Domain.Models;
 using SHL.Domain.Models.Identity;
 using SHL.Infrastructure;
@@ -27,7 +28,13 @@ namespace SHL.Api.Middleware.DI.ServiceExtensions
               .AddRoles<IdentityRole>()
               .AddEntityFrameworkStores<SHLTennantDbContext>()
               .AddDefaultTokenProviders()
-              .AddTotpTokenProvider();
+              .AddTotpTokenProvider()
+              .AddSmsMfaTokenProvider()
+              .AddEmailMfaTokenProvider()
+              .AddTokenProvider<CustomTokenProvider>("Custom");
+
+
+            services.AddTransient<IUserTwoFactorTokenProvider<ApplicationUser>, CustomTokenProvider>();
 
             return services;
         }
