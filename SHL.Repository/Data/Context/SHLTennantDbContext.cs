@@ -7,11 +7,13 @@ using SHL.Application.IManagers;
 using SHL.Application.Interfaces;
 using SHL.Application.Interfaces.GenericRepositoryPattern;
 using SHL.Domain.Models;
+using SHL.Domain.Models.Categories;
+using SHL.Domain.Models.Identity;
 using System.Reflection;
 
 namespace SHL.Repository.Data.Context
 {
-    public class SHLTennantDbContext : IdentityDbContext<CompanyUser>, IUnitOfWork
+    public class SHLTennantDbContext : IdentityDbContext<ApplicationUser>, IUnitOfWork
     {
 
         private readonly IDbConnectionAccessor dbConnectionAccessor;
@@ -104,26 +106,26 @@ namespace SHL.Repository.Data.Context
             // Add any custom configurations for the entities here, e.g.,
             // modelBuilder.Entity<Company>().HasKey(c => c.Id);
 
-            modelBuilder.Entity<CompanyUser>()
-                .ToTable("EquityPlanCompanyUser");
+            modelBuilder.Entity<ApplicationUser>()
+                .ToTable("shl_IdentityUser");
 
-            modelBuilder.Entity<IdentityRole>()
-                .ToTable("EquityPlanRole");
+            modelBuilder.Entity<ApplicationRole>()
+                .ToTable("shl_IdentitynRole");
 
-            modelBuilder.Entity<IdentityUserClaim<string>>()
-                .ToTable("EquityPlanUserClaim");
+            modelBuilder.Entity<ApplicationUserClaim>()
+                .ToTable("shl_IdentityUserClaim");
 
-            modelBuilder.Entity<IdentityUserLogin<string>>()
-                .ToTable("EquityPlanUserLogin");
+            modelBuilder.Entity<ApplicationUserLogin>()
+                .ToTable("shl_IdentityUserLogin");
 
-            modelBuilder.Entity<IdentityRoleClaim<string>>()
-                .ToTable("EquityPlanRoleClaim");
+            modelBuilder.Entity<ApplicationRoleClaim>()
+                .ToTable("shl_IdentityRoleClaim");
 
-            modelBuilder.Entity<IdentityUserToken<string>>()
-                .ToTable("EquityPlanUserToken");
+            modelBuilder.Entity<ApplicationUserToken>()
+                .ToTable("shl_IdentityUserToken");
 
-            modelBuilder.Entity<IdentityUserRole<string>>()
-                .ToTable("EquityPlanUserRole");
+            modelBuilder.Entity<ApplicationUserRole>()
+                .ToTable("shl_IdentityUserRole");
 
             var typesToRegister = Assembly.Load("SHL.Domain");
             modelBuilder.ApplyConfigurationsFromAssembly(typesToRegister);

@@ -12,8 +12,8 @@ using SHL.Repository.Data.Context;
 namespace SHL.Repository.Migrations
 {
     [DbContext(typeof(SHLTennantDbContext))]
-    [Migration("20250420062856_Added Fake Users ")]
-    partial class AddedFakeUsers
+    [Migration("20250421231322_UpdateApplicationUser2")]
+    partial class UpdateApplicationUser2
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -49,7 +49,7 @@ namespace SHL.Repository.Migrations
                         .HasDatabaseName("RoleNameIndex")
                         .HasFilter("[NormalizedName] IS NOT NULL");
 
-                    b.ToTable("EquityPlanRole", (string)null);
+                    b.ToTable("AspNetRoles", (string)null);
 
                     b.HasData(
                         new
@@ -90,7 +90,7 @@ namespace SHL.Repository.Migrations
 
                     b.HasIndex("RoleId");
 
-                    b.ToTable("EquityPlanRoleClaim", (string)null);
+                    b.ToTable("AspNetRoleClaims", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
@@ -115,7 +115,7 @@ namespace SHL.Repository.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("EquityPlanUserClaim", (string)null);
+                    b.ToTable("AspNetUserClaims", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
@@ -137,7 +137,7 @@ namespace SHL.Repository.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("EquityPlanUserLogin", (string)null);
+                    b.ToTable("AspNetUserLogins", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<string>", b =>
@@ -152,7 +152,7 @@ namespace SHL.Repository.Migrations
 
                     b.HasIndex("RoleId");
 
-                    b.ToTable("EquityPlanUserRole", (string)null);
+                    b.ToTable("AspNetUserRoles", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
@@ -171,7 +171,7 @@ namespace SHL.Repository.Migrations
 
                     b.HasKey("UserId", "LoginProvider", "Name");
 
-                    b.ToTable("EquityPlanUserToken", (string)null);
+                    b.ToTable("AspNetUserTokens", (string)null);
                 });
 
             modelBuilder.Entity("SHL.Domain.Models.AppSetting", b =>
@@ -560,12 +560,10 @@ namespace SHL.Repository.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("ConcurrencyStamp")
-                        .IsConcurrencyToken()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Email")
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("bit");
@@ -588,12 +586,10 @@ namespace SHL.Repository.Migrations
                         .HasColumnType("datetimeoffset");
 
                     b.Property<string>("NormalizedEmail")
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("NormalizedUserName")
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("PasswordHash")
                         .HasColumnType("nvarchar(max)");
@@ -619,20 +615,11 @@ namespace SHL.Repository.Migrations
                         .HasColumnType("bit");
 
                     b.Property<string>("UserName")
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("NormalizedEmail")
-                        .HasDatabaseName("EmailIndex");
-
-                    b.HasIndex("NormalizedUserName")
-                        .IsUnique()
-                        .HasDatabaseName("UserNameIndex")
-                        .HasFilter("[NormalizedUserName] IS NOT NULL");
-
-                    b.ToTable("EquityPlanCompanyUser", (string)null);
+                    b.ToTable("CompanyUser");
                 });
 
             modelBuilder.Entity("SHL.Domain.Models.Contact", b =>
@@ -1160,6 +1147,303 @@ namespace SHL.Repository.Migrations
                     b.HasIndex("GrantOptionPoolId");
 
                     b.ToTable("Grants");
+                });
+
+            modelBuilder.Entity("SHL.Domain.Models.Identity.ApplicationPermission", b =>
+                {
+                    b.Property<long>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("ID"));
+
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("ModuleID")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("ID");
+
+                    b.ToTable("ApplicationPermission");
+                });
+
+            modelBuilder.Entity("SHL.Domain.Models.Identity.ApplicationRole", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<string>("ConcurrencyStamp")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsSystemRole")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("NormalizedName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("shl_IdentitynRole", (string)null);
+                });
+
+            modelBuilder.Entity("SHL.Domain.Models.Identity.ApplicationRoleClaim", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<long>("ApplicationClaimId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("ApplicationRoleId")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("ClaimType")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ClaimValue")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<long>("RoleId")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("shl_IdentityRoleClaim", (string)null);
+                });
+
+            modelBuilder.Entity("SHL.Domain.Models.Identity.ApplicationRolePermission", b =>
+                {
+                    b.Property<int>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
+
+                    b.Property<long>("ApplicationPermissionId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("ApplicationRoleId")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTime>("DateCreated")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("ApplicationPermissionId");
+
+                    b.HasIndex("ApplicationRoleId");
+
+                    b.ToTable("ApplicationRolePermission");
+                });
+
+            modelBuilder.Entity("SHL.Domain.Models.Identity.ApplicationUser", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("AccessFailedCount")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ApiSessionId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("CompanyId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ConcurrencyStamp")
+                        .IsConcurrencyToken()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Email")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<bool>("EmailConfirmed")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("FullName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsAdmin")
+                        .HasColumnType("bit");
+
+                    b.Property<bool?>("IsEnabled")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsTenantAdmin")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("LastComputerName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("LastLogin")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("LockoutEnabled")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTimeOffset?>("LockoutEnd")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("NormalizedEmail")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("NormalizedUserName")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("PasswordHash")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PhoneNumber")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("PhoneNumberConfirmed")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("SecurityStamp")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("SubsidiaryId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Token")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("TwoFactorEnabled")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("UserName")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("NormalizedEmail")
+                        .HasDatabaseName("EmailIndex");
+
+                    b.HasIndex("NormalizedUserName")
+                        .IsUnique()
+                        .HasDatabaseName("UserNameIndex")
+                        .HasFilter("[NormalizedUserName] IS NOT NULL");
+
+                    b.ToTable("shl_IdentityUser", (string)null);
+                });
+
+            modelBuilder.Entity("SHL.Domain.Models.Identity.ApplicationUserClaim", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("ClaimType")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ClaimValue")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<long>("UserId")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("shl_IdentityUserClaim", (string)null);
+                });
+
+            modelBuilder.Entity("SHL.Domain.Models.Identity.ApplicationUserLogin", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<string>("LoginProvider")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ProviderDisplayName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ProviderKey")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<long>("UserId")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("shl_IdentityUserLogin", (string)null);
+                });
+
+            modelBuilder.Entity("SHL.Domain.Models.Identity.ApplicationUserRole", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<long>("RoleId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("UserId")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("shl_IdentityUserRole", (string)null);
+                });
+
+            modelBuilder.Entity("SHL.Domain.Models.Identity.ApplicationUserToken", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<string>("LoginProvider")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<long>("UserId")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("Value")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("shl_IdentityUserToken", (string)null);
                 });
 
             modelBuilder.Entity("SHL.Domain.Models.Invitation", b =>
@@ -2207,7 +2491,7 @@ namespace SHL.Repository.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
                 {
-                    b.HasOne("SHL.Domain.Models.CompanyUser", null)
+                    b.HasOne("SHL.Domain.Models.Identity.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -2216,7 +2500,7 @@ namespace SHL.Repository.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
                 {
-                    b.HasOne("SHL.Domain.Models.CompanyUser", null)
+                    b.HasOne("SHL.Domain.Models.Identity.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -2231,7 +2515,7 @@ namespace SHL.Repository.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("SHL.Domain.Models.CompanyUser", null)
+                    b.HasOne("SHL.Domain.Models.Identity.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -2240,7 +2524,7 @@ namespace SHL.Repository.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
                 {
-                    b.HasOne("SHL.Domain.Models.CompanyUser", null)
+                    b.HasOne("SHL.Domain.Models.Identity.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -2368,6 +2652,25 @@ namespace SHL.Repository.Migrations
                         .HasForeignKey("GrantOptionPoolId");
 
                     b.Navigation("GrantOptionPool");
+                });
+
+            modelBuilder.Entity("SHL.Domain.Models.Identity.ApplicationRolePermission", b =>
+                {
+                    b.HasOne("SHL.Domain.Models.Identity.ApplicationPermission", "ApplicationPermission")
+                        .WithMany("ApplicationRolePermissions")
+                        .HasForeignKey("ApplicationPermissionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("SHL.Domain.Models.Identity.ApplicationRole", "ApplicationRole")
+                        .WithMany("ApplicationRolePermissions")
+                        .HasForeignKey("ApplicationRoleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ApplicationPermission");
+
+                    b.Navigation("ApplicationRole");
                 });
 
             modelBuilder.Entity("SHL.Domain.Models.NotificationActivity", b =>
@@ -2592,6 +2895,16 @@ namespace SHL.Repository.Migrations
                     b.Navigation("GrantVestingSchedules");
 
                     b.Navigation("TargetOptionHolders");
+                });
+
+            modelBuilder.Entity("SHL.Domain.Models.Identity.ApplicationPermission", b =>
+                {
+                    b.Navigation("ApplicationRolePermissions");
+                });
+
+            modelBuilder.Entity("SHL.Domain.Models.Identity.ApplicationRole", b =>
+                {
+                    b.Navigation("ApplicationRolePermissions");
                 });
 
             modelBuilder.Entity("SHL.Domain.Models.Offer", b =>

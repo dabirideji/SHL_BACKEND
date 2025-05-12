@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Identity;
 using SHL.Application.DTO.Staff;
 using SHL.Domain.Models;
+using SHL.Domain.Models.Identity;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,9 +13,9 @@ namespace SHL.Application.Validators.Staff
 {
    public class StaffOnboardingDtoValidator:AbstractValidator<StaffOnboardingDto>
     {
-        public StaffOnboardingDtoValidator(UserManager<CompanyUser> userManager,
-            IPasswordValidator<CompanyUser> passwordValidator,
-            IUserValidator<CompanyUser> userValidator)
+        public StaffOnboardingDtoValidator(UserManager<ApplicationUser> userManager,
+            IPasswordValidator<ApplicationUser> passwordValidator,
+            IUserValidator<ApplicationUser> userValidator)
         {
             RuleFor(c => c.EmployeeId)
                  .NotEmpty();
@@ -60,7 +61,7 @@ namespace SHL.Application.Validators.Staff
             RuleFor(c => c)
                 .CustomAsync(async (model, context, ct) =>
                 {
-                    var user = new CompanyUser
+                    var user = new ApplicationUser
                     {
                         UserName = model.EmailAddress,
                         Email = model.EmailAddress
@@ -79,7 +80,7 @@ namespace SHL.Application.Validators.Staff
             RuleFor(c => c)
                 .CustomAsync(async (model, context, ct) =>
                 {
-                    var user = new CompanyUser
+                    var user = new ApplicationUser
                     {
                         UserName = model.EmailAddress,
                         Email = model.EmailAddress

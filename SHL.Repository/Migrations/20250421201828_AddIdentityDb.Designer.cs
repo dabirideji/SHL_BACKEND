@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SHL.Repository.Data.Context;
 
@@ -11,9 +12,11 @@ using SHL.Repository.Data.Context;
 namespace SHL.Repository.Migrations
 {
     [DbContext(typeof(SHLTennantDbContext))]
-    partial class SHLTennantDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250421201828_AddIdentityDb")]
+    partial class AddIdentityDb
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1262,9 +1265,10 @@ namespace SHL.Repository.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("ApiSessionId")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("CompanyId")
+                    b.Property<int>("CompanyId")
                         .HasColumnType("int");
 
                     b.Property<string>("ConcurrencyStamp")
@@ -1278,7 +1282,8 @@ namespace SHL.Repository.Migrations
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("bit");
 
-                    b.Property<string>("FullName")
+                    b.Property<string>("FirstName")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("IsAdmin")
@@ -1291,10 +1296,15 @@ namespace SHL.Repository.Migrations
                         .HasColumnType("bit");
 
                     b.Property<string>("LastComputerName")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("LastLogin")
                         .HasColumnType("datetime2");
+
+                    b.Property<string>("LastName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("bit");
@@ -1322,10 +1332,11 @@ namespace SHL.Repository.Migrations
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("SubsidiaryId")
+                    b.Property<int>("SubsidiaryId")
                         .HasColumnType("int");
 
                     b.Property<string>("Token")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("TwoFactorEnabled")

@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
 using SHL.Application.IServices;
 using SHL.Domain.Models;
+using SHL.Domain.Models.Identity;
 using SHL.Repository.Data.Context;
 using System;
 using System.Collections.Generic;
@@ -13,7 +14,7 @@ using System.Threading.Tasks;
 
 namespace SHL.Infrastructure
 {
-    public class UserValidator : IUserValidator<CompanyUser>
+    public class UserValidator : IUserValidator<ApplicationUser>
     {
         private readonly IHttpContextAccessor httpContextAccessor;
         private readonly IUserIdentityService userIdentityService;
@@ -27,7 +28,7 @@ namespace SHL.Infrastructure
             this.userIdentityService = userIdentityService;
             this.SHLMasterDbContext = SHLMasterDbContext;
         }
-        public Task<IdentityResult> ValidateAsync(UserManager<CompanyUser> manager, CompanyUser user)
+        public Task<IdentityResult> ValidateAsync(UserManager<ApplicationUser> manager, ApplicationUser user)
         {
 
             if (httpContextAccessor.HttpContext is not null && httpContextAccessor.HttpContext!.User!.Identity!.IsAuthenticated)

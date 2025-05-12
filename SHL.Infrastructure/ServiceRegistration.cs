@@ -16,6 +16,9 @@ namespace SHL.Infrastructure
             services.AddScoped<IAzureBlobStorageService, AzureBlobStorageService>();
             services.AddScoped<IUserIdentityService, UserIdentityService>();
             services.AddScoped<IExcelProcessor, ExcelProcessor>();
+            services.AddScoped<IUserOnboardingService, UserOnboardingService>();
+            services.AddScoped<ITokenServices, TokenServices>();
+            services.AddScoped<IEmailService, EmailService>();
             return services;
         }
     }

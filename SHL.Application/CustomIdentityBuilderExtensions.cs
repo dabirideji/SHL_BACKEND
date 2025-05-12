@@ -1,17 +1,19 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using SHL.Application.Services;
 using SHL.Application.TokenProviders;
 using SHL.Application.TwoAuthenticatorProviders;
 
-namespace SHL.Api.Middleware.DI.ServiceExtensions
+namespace SHL.Application
 {
-    public static class IdentityBuilderExtensions
+    public static class CustomIdentityBuilderExtensions
     {
         public static IdentityBuilder AddTotpTokenProvider(this IdentityBuilder builder)
         {
             var userType = builder.UserType;
-            var totpProvider = typeof(TotpTokenProvider);
-            return builder.AddTokenProvider("TotpTokenProvider", totpProvider);
+            var totpProvider = typeof(TotpTokenProvider<>).MakeGenericType(userType);
+            return builder.AddTokenProvider(AppTokenProvider.TotpProvider, totpProvider);
         }
+
         public static IdentityBuilder AddSmsMfaTokenProvider(this IdentityBuilder builder)
         {
             var userType = builder.UserType;
@@ -22,7 +24,7 @@ namespace SHL.Api.Middleware.DI.ServiceExtensions
         public static IdentityBuilder AddEmailMfaTokenProvider(this IdentityBuilder builder)
         {
             var userType = builder.UserType;
-            var totpProvider = typeof(Microsoft.AspNetCore.Identity.EmailTokenProvider<>).MakeGenericType(userType);
+            var totpProvider = typeof(EmailTokenProvider<>).MakeGenericType(userType);
             return builder.AddTokenProvider(AppTokenProvider.TwoFAEmailProvider, totpProvider);
         }
     }
