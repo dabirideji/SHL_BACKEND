@@ -13,8 +13,8 @@ namespace SHL.Api.Middleware.DI.ServiceExtensions
         {
             services.AddIdentityCore<ApplicationUser>(opt =>
             {
-                opt.User.RequireUniqueEmail = true;
-                opt.SignIn.RequireConfirmedEmail = true;
+                opt.User.RequireUniqueEmail = false;
+                opt.SignIn.RequireConfirmedEmail = false;
                 opt.Password.RequiredLength = 8;
                 opt.Password.RequireNonAlphanumeric = true;
                 opt.Password.RequireDigit = true;
