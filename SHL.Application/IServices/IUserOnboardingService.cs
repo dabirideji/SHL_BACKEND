@@ -8,7 +8,7 @@ namespace SHL.Application.IServices
         Task<UserResponseDTO> CreateUserAsIndividualAsync(CreateUserAsIndividualDTO userModel);
         Task<UserResponseDTO> CreateUserAsInstitutionalAsync(CreateUserAsInstitutionDTO userModel);
         Task<UserResponseDTO> CreateUserAsVendorAsync(CreateUserAsVendorDTO userModel);
-        Task<UserResponseDTO> UpdateUserAsync(UpdateUserDTO userModel);
+       // Task<UserResponseDTO> UpdateUserAsync(UpdateUserDTO userModel);
         Task<ApplicationUser> GetUserByIdAsync(string UserId);
         Task<UserResponseDTO> UserLoginAsync(LoginDTO userModel);
         Task<UserResponseDTO> ResetPasswordAsync(ResetPasswordDTO userModel);

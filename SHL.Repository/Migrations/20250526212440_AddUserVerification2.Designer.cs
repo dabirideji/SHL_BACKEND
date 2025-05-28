@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SHL.Repository.Data.Context;
 
@@ -11,9 +12,11 @@ using SHL.Repository.Data.Context;
 namespace SHL.Repository.Migrations
 {
     [DbContext(typeof(SHLTennantDbContext))]
-    partial class SHLTennantDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250526212440_AddUserVerification2")]
+    partial class AddUserVerification2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -2314,6 +2317,7 @@ namespace SHL.Repository.Migrations
                         .HasColumnType("nvarchar(50)");
 
                     b.Property<string>("InfoUpdateStatus")
+                        .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
@@ -2364,6 +2368,11 @@ namespace SHL.Repository.Migrations
                     b.Property<DateTime?>("NextBillingDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("OTP")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)");
+
                     b.Property<string>("OtherName")
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
@@ -2388,11 +2397,18 @@ namespace SHL.Repository.Migrations
                         .HasMaxLength(20)
                         .HasColumnType("nvarchar(20)");
 
+                    b.Property<string>("RequestOTP")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)");
+
                     b.Property<string>("Sex")
+                        .IsRequired()
                         .HasMaxLength(10)
                         .HasColumnType("nvarchar(10)");
 
                     b.Property<string>("Source")
+                        .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
@@ -2405,6 +2421,11 @@ namespace SHL.Repository.Migrations
 
                     b.Property<bool?>("ToggleNotification")
                         .HasColumnType("bit");
+
+                    b.Property<string>("Token")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
 
                     b.HasKey("Id");
 

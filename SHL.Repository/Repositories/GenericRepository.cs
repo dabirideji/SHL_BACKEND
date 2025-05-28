@@ -1,25 +1,20 @@
-
-using System.Data.Entity.Core.Metadata.Edm;
 using System.Linq.Expressions;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using SHL.Application.IManagers;
-using SHL.Application.Interfaces.GenericRepositoryPattern;
-using SHL.Repository.Data.Context;
+using SHL.Application.Repositories;
 
-namespace SHL.Repository.Repositories.GenericRepositoryImplementations
+namespace SHL.Repository.Repositories
 {
     public class GenericRepository<T> : IGenericRepository<T> where T : class
     {
         private readonly ICacheManager _cacheManager;
-        public readonly DbContext _context;
+        public readonly SHLTennantDbContext _context;
         public readonly DbSet<T> _dbSet;
 
-        public GenericRepository(ICacheManager cacheManager, DbContext context)
+        public GenericRepository(ICacheManager cacheManager, SHLTennantDbContext context)
         {
 
             _cacheManager = cacheManager;
-            _dbSet = _context.Set<T>();
+            _dbSet = context.Set<T>();
             _context = context;
         }
 

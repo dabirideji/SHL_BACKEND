@@ -57,5 +57,6 @@ namespace SHL.IdentityServer.Api.Controllers
             var result = await userOnboardingService.VerifyOtp(userDTO);
             return Ok(result);
         }
+       
     }
 }

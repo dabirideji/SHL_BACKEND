@@ -1,15 +1,19 @@
 ﻿using System.Text.RegularExpressions;
+using CSL.Application.Utils.DTO;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using OfficeOpenXml.FormulaParsing.LexicalAnalysis;
 using SHL.Application.CustomExceptions;
 using SHL.Application.DTO.Identity;
 using SHL.Application.DTO.SendEmail;
 using SHL.Application.IServices;
 using SHL.Application.TokenProviders;
+using SHL.Domain.Models;
 using SHL.Domain.Models.Identity;
 
 namespace SHL.Infrastructure.Services
@@ -24,11 +28,14 @@ namespace SHL.Infrastructure.Services
         private readonly ILogger<UserOnboardingService> logger;
         private readonly ITokenServices tokenServices;
         private readonly ISmsService smsService;
+        private readonly IShareholderService shareholderService;
+        private readonly IUserVerificationService userVerificationService;
 
         public UserOnboardingService(UserManager<ApplicationUser> userManager, 
             IConfiguration configuration,IEmailService emailService,IUserIdentityService userIdentityService,
             SignInManager<ApplicationUser> signInManager, ILogger<UserOnboardingService> logger,
-            ITokenServices tokenServices, ISmsService smsService)
+            ITokenServices tokenServices, ISmsService smsService,IShareholderService shareholderService,
+            IUserVerificationService userVerificationService)
         {
             this.userManager = userManager;
             this.configuration = configuration;
@@ -38,6 +45,8 @@ namespace SHL.Infrastructure.Services
             this.logger = logger;
             this.tokenServices = tokenServices;
             this.smsService = smsService;
+            this.shareholderService = shareholderService;
+            this.userVerificationService = userVerificationService;
         }
 
         public async Task<UserResponseDTO> CreateUserAsIndividualAsync(CreateUserAsIndividualDTO userModel)
@@ -56,8 +65,15 @@ namespace SHL.Infrastructure.Services
                 {
                     FullName=userModel.FullName,
                     UserName = userModel.EmailOrPhoneNumber,
-                    Email = userModel.EmailOrPhoneNumber
-                    
+                    Email = userModel.EmailOrPhoneNumber,
+                    UserVerification = new UserVerification
+                    {
+                        Email = email,
+                        IsSent = true,
+                        IsFreeMode = true,
+                        IsPolicyAccepted = true
+                    }
+
                 };
             }
             else if (fetchEmailOrPhone == "PhoneNumber")
@@ -66,7 +82,14 @@ namespace SHL.Infrastructure.Services
                 {
                     FullName = userModel.FullName,
                     UserName = userModel.EmailOrPhoneNumber,
-                    PhoneNumber ="234"+ userModel.EmailOrPhoneNumber
+                    PhoneNumber ="234"+ userModel.EmailOrPhoneNumber,
+                    UserVerification = new UserVerification
+                    {
+                        Email = email,
+                        IsSent = true,
+                        IsFreeMode = true,
+                        IsPolicyAccepted = true
+                    }
                 };
             }
             var result = await userManager.CreateAsync(user, userModel.Password);
@@ -96,6 +119,7 @@ namespace SHL.Infrastructure.Services
         public async Task<UserResponseDTO> CreateUserAsInstitutionalAsync(CreateUserAsInstitutionDTO userModel)
         {
             var user = new ApplicationUser();
+            var verifyUser = new VerifyInviteDTO();
             string email = string.Empty; string phonenumber = string.Empty;
             var fetchEmailOrPhone = EstractEmailOrPhoneNumber(userModel.EmailOrPhoneNumber);
             var checkUser = await CheckExistingUser(userModel.EmailOrPhoneNumber);
@@ -105,65 +129,36 @@ namespace SHL.Infrastructure.Services
             }
             if (fetchEmailOrPhone == "Email")
             {
-                user = new ApplicationUser()
+                verifyUser = shareholderService.GetShareholder(userModel.EmailOrPhoneNumber, userModel.CompanyId);
+                if (verifyUser == null || verifyUser.CompanyId == 0)
                 {
-                    FullName = userModel.FullName,
-                    UserName = userModel.EmailOrPhoneNumber,
-                    CompanyId = userModel.CompanyId,
-                    Email = userModel.EmailOrPhoneNumber
-                };
-            }
-            else if (fetchEmailOrPhone == "PhoneNumber")
-            {
-                user = new ApplicationUser
-                {
-                    FullName = userModel.FullName,
-                    UserName = userModel.EmailOrPhoneNumber,
-                    CompanyId = userModel.CompanyId,
-                    PhoneNumber = "234" + userModel.EmailOrPhoneNumber
-                };
-            }
-            var result = await userManager.CreateAsync(user, userModel.Password);
-            if (result.Succeeded == false)
-            {
-                ApiException.ClientError("FAILED TO CREATE USER", 400, new { result });
-                return null;
-            }
-            else
-            {
-                var otp = await userManager.GenerateTwoFactorTokenAsync(user, AppTokenProvider.TotpProvider);
-                //send OTP
-                if (fetchEmailOrPhone == "Email")
-                {
-                    await SendOtpEmailInternalAsync(user.Email, otp);
+                    ApiException.ClientError("You have an account already on ShareholderLive Portal! Sign In to access your account.", 400);
+
                 }
-                else
-                {
-                   await smsService.SendSmsAsync(user.PhoneNumber, otp);
-                }
-                var userData = await UserResponses(user);
-                return userData;
-            }
-        }
-        public async Task<UserResponseDTO> CreateUserAsVendorAsync(CreateUserAsVendorDTO userModel)
-        {
-            var user = new ApplicationUser();
-            string email = string.Empty; string phonenumber = string.Empty;
-            var fetchEmailOrPhone = EstractEmailOrPhoneNumber(userModel.EmailOrPhoneNumber);
-            var checkUser = await CheckExistingUser(userModel.EmailOrPhoneNumber);
-            if (checkUser == true)
-            {
-                ApiException.ClientError("You have an account already on ShareholderLive Portal! Sign In to access your account.", 400);
-            }
-            if (fetchEmailOrPhone == "Email")
-            {
                 user = new ApplicationUser()
                 {
                     FullName = userModel.FullName,
                     UserName = userModel.EmailOrPhoneNumber,
                     CompanyId = userModel.CompanyId,
                     Email = userModel.EmailOrPhoneNumber,
-                    SubsidiaryId=userModel.BusinessCategoryId
+                    UserVerification = new UserVerification
+                    {
+                        DefaultCompanyId = verifyUser.CompanyId,
+                        DefaultAcctNo = verifyUser.acctno,
+                        FirstName = verifyUser.FirstName,
+                        LastName = verifyUser.LastName,
+                        OtherName = verifyUser.OtherName,
+                        BVN = verifyUser.BVN,
+                        Holder_type = verifyUser.Holder_type,
+                        Email = verifyUser.EmailTo,
+                        Phone_no = verifyUser.Phone_no,
+                        IsSent = true,
+                        IsFreeMode = true,
+                        IsPolicyAccepted = true,
+                       // InfoUpdateStatus="",
+                        
+                    }
+
                 };
             }
             else if (fetchEmailOrPhone == "PhoneNumber")
@@ -174,7 +169,114 @@ namespace SHL.Infrastructure.Services
                     UserName = userModel.EmailOrPhoneNumber,
                     CompanyId = userModel.CompanyId,
                     PhoneNumber = "234" + userModel.EmailOrPhoneNumber,
-                    SubsidiaryId = userModel.BusinessCategoryId
+                    UserVerification = new UserVerification
+                    {
+                        DefaultCompanyId = verifyUser.CompanyId,
+                        DefaultAcctNo = verifyUser.acctno,
+                        FirstName = verifyUser.FirstName,
+                        LastName = verifyUser.LastName,
+                        OtherName = verifyUser.OtherName,
+                        BVN = verifyUser.BVN,
+                        Holder_type = verifyUser.Holder_type,
+                        Email = verifyUser.EmailTo,
+                        Phone_no = verifyUser.Phone_no,
+                        IsSent = true,
+                        IsFreeMode = true,
+                        IsPolicyAccepted = true
+                    }
+                };
+            }
+            
+            var result = await userManager.CreateAsync(user, userModel.Password);
+            if (result.Succeeded == false)
+            {
+                ApiException.ClientError("FAILED TO CREATE USER", 400, new { result });
+                return null;
+            }
+            else
+            {
+                var otp = await userManager.GenerateTwoFactorTokenAsync(user, "Custom");
+                //send OTP
+                if (fetchEmailOrPhone == "Email")
+                {
+                    await SendOtpEmailInternalAsync(user.Email, otp);
+                }
+                else
+                {
+                   await smsService.SendSmsAsync(user.PhoneNumber, otp);
+                }
+                
+                var userData = await UserResponses(user);
+                return userData;
+            }
+        }
+        public async Task<UserResponseDTO> CreateUserAsVendorAsync(CreateUserAsVendorDTO userModel)
+        {
+            var user = new ApplicationUser();
+            var verifyUser = new VerifyInviteDTO();
+            string email = string.Empty; string phonenumber = string.Empty;
+            var fetchEmailOrPhone = EstractEmailOrPhoneNumber(userModel.EmailOrPhoneNumber);
+            var checkUser = await CheckExistingUser(userModel.EmailOrPhoneNumber);
+            if (checkUser == true)
+            {
+                ApiException.ClientError("You have an account already on ShareholderLive Portal! Sign In to access your account.", 400);
+            }
+            if (fetchEmailOrPhone == "Email")
+            {
+                verifyUser = shareholderService.GetShareholder(userModel.EmailOrPhoneNumber, userModel.CompanyId);
+                if (verifyUser == null || verifyUser.CompanyId == 0)
+                {
+                    ApiException.ClientError("You have an account already on ShareholderLive Portal! Sign In to access your account.", 400);
+
+                }
+                user = new ApplicationUser()
+                {
+                    FullName = userModel.FullName,
+                    UserName = userModel.EmailOrPhoneNumber,
+                    CompanyId = userModel.CompanyId,
+                    Email = userModel.EmailOrPhoneNumber,
+                    SubsidiaryId=userModel.BusinessCategoryId,
+                    UserVerification = new UserVerification
+                    {
+                        DefaultCompanyId = verifyUser.CompanyId,
+                        DefaultAcctNo = verifyUser.acctno,
+                        FirstName = verifyUser.FirstName,
+                        LastName = verifyUser.LastName,
+                        OtherName = verifyUser.OtherName,
+                        BVN = verifyUser.BVN,
+                        Holder_type = verifyUser.Holder_type,
+                        Email = verifyUser.EmailTo,
+                        Phone_no = verifyUser.Phone_no,
+                        IsSent = true,
+                        IsFreeMode = true,
+                        IsPolicyAccepted = true
+                    }
+                };
+            }
+            else if (fetchEmailOrPhone == "PhoneNumber")
+            {
+                user = new ApplicationUser
+                {
+                    FullName = userModel.FullName,
+                    UserName = userModel.EmailOrPhoneNumber,
+                    CompanyId = userModel.CompanyId,
+                    PhoneNumber = "234" + userModel.EmailOrPhoneNumber,
+                    SubsidiaryId = userModel.BusinessCategoryId,
+                    UserVerification = new UserVerification
+                    {
+                        DefaultCompanyId = verifyUser.CompanyId,
+                        DefaultAcctNo = verifyUser.acctno,
+                        FirstName = verifyUser.FirstName,
+                        LastName = verifyUser.LastName,
+                        OtherName = verifyUser.OtherName,
+                        BVN = verifyUser.BVN,
+                        Holder_type = verifyUser.Holder_type,
+                        Email = verifyUser.EmailTo,
+                        Phone_no = verifyUser.Phone_no,
+                        IsSent = true,
+                        IsFreeMode = true,
+                        IsPolicyAccepted = true
+                    }
                 };
             }
             var result = await userManager.CreateAsync(user, userModel.Password);
@@ -185,7 +287,7 @@ namespace SHL.Infrastructure.Services
             }
             else
             {
-                var otp = await userManager.GenerateTwoFactorTokenAsync(user, AppTokenProvider.TotpProvider);
+                var otp = await userManager.GenerateTwoFactorTokenAsync(user, "Custom");
                 //send OTP
                 if (fetchEmailOrPhone == "Email")
                 {
@@ -288,10 +390,6 @@ namespace SHL.Infrastructure.Services
             return await userManager.FindByIdAsync(UserId);
         }
 
-        public async Task<UserResponseDTO> UpdateUserAsync(UpdateUserDTO userModel)
-        {
-            throw new NotImplementedException();
-        }
         public async Task<bool> VerifyOtp(VerifyOtpDto model)
         {
             var user = await userManager.FindByIdAsync(userIdentityService.SubjectId.ToString());

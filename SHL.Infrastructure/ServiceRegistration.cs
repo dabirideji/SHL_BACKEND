@@ -17,11 +17,15 @@ namespace SHL.Infrastructure
             services.AddScoped<IAzureBlobStorageService, AzureBlobStorageService>();
             services.AddScoped<IUserIdentityService, UserIdentityService>();
             services.AddScoped<IExcelProcessor, ExcelProcessor>();
-           // services.AddScoped<ISmsService, SmsService>();
             services.AddHttpClient<ISmsService, SmsService>();
             services.AddScoped<IUserOnboardingService, UserOnboardingService>();
             services.AddScoped<ITokenServices, TokenServices>();
             services.AddScoped<IEmailService, EmailService>();
+            services.AddScoped<IShareholderService, ShareholderService>();
+            services.AddScoped<IEStockService,EStockService>();
+            services.AddScoped<ISmsService, SmsService>();
+            services.AddScoped<IUserVerificationService, UserVerificationService>();
+
            
 
             return services;

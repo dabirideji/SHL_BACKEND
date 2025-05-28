@@ -1,6 +1,6 @@
 using System;
 
-namespace CSL.Models.Accounts
+namespace SHL.Domain.Models
 {
 
 

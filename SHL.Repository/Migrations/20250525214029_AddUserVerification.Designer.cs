@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SHL.Repository.Data.Context;
 
@@ -11,9 +12,11 @@ using SHL.Repository.Data.Context;
 namespace SHL.Repository.Migrations
 {
     [DbContext(typeof(SHLTennantDbContext))]
-    partial class SHLTennantDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250525214029_AddUserVerification")]
+    partial class AddUserVerification
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -2264,22 +2267,14 @@ namespace SHL.Repository.Migrations
                     b.Property<DateTime?>("ActivatedDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("ApplicationUserId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
                     b.Property<string>("BVN")
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("CustomerNo")
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("DateCreated")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("GETDATE()");
+                        .HasColumnType("datetime2");
 
                     b.Property<DateTime?>("DateModified")
                         .HasColumnType("datetime2");
@@ -2294,124 +2289,107 @@ namespace SHL.Repository.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Email")
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("EmailVerifyDate")
                         .HasColumnType("datetime2");
 
                     b.Property<bool>("Email_Verified")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(false);
+                        .HasColumnType("bit");
 
                     b.Property<string>("FirstName")
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Holder_type")
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("InfoUpdateStatus")
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("IsActive")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(true);
+                        .HasColumnType("bit");
 
                     b.Property<bool>("IsFreeMode")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(false);
+                        .HasColumnType("bit");
 
                     b.Property<bool>("IsNotify")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(false);
+                        .HasColumnType("bit");
 
                     b.Property<bool?>("IsPolicyAccepted")
                         .HasColumnType("bit");
 
                     b.Property<bool>("IsSent")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(false);
+                        .HasColumnType("bit");
 
                     b.Property<bool>("IsSynched")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(false);
+                        .HasColumnType("bit");
 
                     b.Property<bool>("IsTokenExpired")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(false);
+                        .HasColumnType("bit");
 
                     b.Property<string>("LastName")
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("LastPaymentDate")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("NIN")
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("NextBillingDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("OTP")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("OtherName")
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Password")
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("PhoneVerifyDate")
                         .HasColumnType("datetime2");
 
                     b.Property<bool>("Phone_Verified")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(false);
+                        .HasColumnType("bit");
 
                     b.Property<string>("Phone_no")
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("RC_No")
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("RequestOTP")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Sex")
-                        .HasMaxLength(10)
-                        .HasColumnType("nvarchar(10)");
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Source")
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<long?>("SubscriptionId")
                         .HasColumnType("bigint");
 
                     b.Property<string>("TIN")
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<bool?>("ToggleNotification")
                         .HasColumnType("bit");
 
+                    b.Property<string>("Token")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.HasKey("Id");
 
-                    b.HasIndex("ApplicationUserId")
-                        .IsUnique();
-
-                    b.ToTable("UserVerification", (string)null);
+                    b.ToTable("UserVerifications");
                 });
 
             modelBuilder.Entity("SHL.Domain.Models.VestedShareTransfer", b =>
@@ -2971,17 +2949,6 @@ namespace SHL.Repository.Migrations
                     b.Navigation("Staff");
                 });
 
-            modelBuilder.Entity("SHL.Domain.Models.UserVerification", b =>
-                {
-                    b.HasOne("SHL.Domain.Models.Identity.ApplicationUser", "ApplicationUser")
-                        .WithOne("UserVerification")
-                        .HasForeignKey("SHL.Domain.Models.UserVerification", "ApplicationUserId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("ApplicationUser");
-                });
-
             modelBuilder.Entity("SHL.Domain.Models.VestedShareTransfer", b =>
                 {
                     b.HasOne("SHL.Domain.Models.Offer", "Offer")
@@ -3074,11 +3041,6 @@ namespace SHL.Repository.Migrations
             modelBuilder.Entity("SHL.Domain.Models.Identity.ApplicationRole", b =>
                 {
                     b.Navigation("ApplicationRolePermissions");
-                });
-
-            modelBuilder.Entity("SHL.Domain.Models.Identity.ApplicationUser", b =>
-                {
-                    b.Navigation("UserVerification");
                 });
 
             modelBuilder.Entity("SHL.Domain.Models.Offer", b =>

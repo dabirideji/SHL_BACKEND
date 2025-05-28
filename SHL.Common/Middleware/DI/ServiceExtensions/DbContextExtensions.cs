@@ -19,6 +19,11 @@ public static class DbContextExtensions
             options.UseSqlServer(configuration.GetConnectionString("MasterConnection"),
                 b => b.MigrationsAssembly("SHL.Repository"));
         });
+        services.AddDbContext<EstockDbContext>(options =>
+        {
+            options.UseSqlServer(configuration.GetConnectionString("EstockConnection"),
+                b => b.MigrationsAssembly("SHL.Repository"));
+        });
         return services;
     }
 }

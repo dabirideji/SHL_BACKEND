@@ -2,6 +2,7 @@ using System.Linq.Expressions;
 using AutoMapper;
 using SHL.Application.Interfaces;
 using SHL.Application.Interfaces.GenericRepositoryPattern;
+using SHL.Application.Repositories;
 
 namespace InventoryManagement.Application.Services.Customer
 {
