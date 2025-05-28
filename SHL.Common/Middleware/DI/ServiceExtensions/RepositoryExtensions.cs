@@ -1,7 +1,8 @@
-using Microsoft.Extensions.DependencyInjection;
 using SHL.Application.Interfaces.GenericRepositoryPattern;
+using SHL.Application.IServices;
+using SHL.Application.Repositories;
+using SHL.Repository.Factory;
 using SHL.Repository.Repositories;
-using SHL.Repository.Repositories.GenericRepositoryImplementations;
 
 public static class RepositoryExtensions
 {
@@ -11,9 +12,11 @@ public static class RepositoryExtensions
         services.AddScoped<IDbContextRepository, DbContextRepository>();
         services.AddScoped<IDbRepository, DapperDbRepository>();
         services.AddScoped<IUnitOfWork, SHL.Repository.Repositories.UnitOfWork>();
-
+        services.AddScoped<IDapper,DapperServices>();
         // Registering all repository interfaces with their implementations
         services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
+        services.AddScoped<IShareholderRepository, ShareholderRepository>();
+        services.AddScoped<IUserVerificationRepository, UserVerificationRepository>();
         return services;
     }
 }

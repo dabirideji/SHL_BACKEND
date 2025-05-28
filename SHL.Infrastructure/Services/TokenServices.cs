@@ -35,7 +35,7 @@ namespace SHL.Infrastructure.Services
                     new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
                     new Claim(ClaimTypes.Email, user.Email??"",""),
                     new Claim(ClaimTypes.MobilePhone,user?.PhoneNumber?? "",""),
-                    new Claim("CompanyId",user?.CompanyId.ToString()??null,null),
+                    new Claim("companyid",user?.CompanyId.ToString()??null,null),
 
                 };
                 await userManager.AddClaimsAsync(user, claims);

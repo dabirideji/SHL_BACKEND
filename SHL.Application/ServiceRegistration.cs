@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using SHL.Application.AppSettings;
+using SHL.Application.DTO.SendEmail;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -25,6 +26,7 @@ namespace SHL.Application
             services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly())
                 // .AddHttpClientServices(configuration)
                 .AddConfigs(configuration);
+            services.Configure<SmsSettings>(configuration.GetSection("Comm"));
             return services;
         }
 

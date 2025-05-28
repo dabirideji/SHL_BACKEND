@@ -11,7 +11,6 @@ namespace SHL.Application.IServices
 {
     public interface IEmailService
     {
-        Task<bool> SendMail(EmailDto dto);
-        Task<bool> SendMailWithAttachmentAsync(EmailDto dto);
+        Task<EmailResponse> SendMail(EmailModelDto dto);
     }
 }

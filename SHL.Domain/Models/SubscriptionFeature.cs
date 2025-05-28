@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace CSL.Models.Accounts
+namespace SHL.Domain.Models
 {
     public class SubscriptionFeature : BaseModel
     {

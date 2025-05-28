@@ -1,13 +1,9 @@
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using SHL.Application.IManagers;
 using SHL.Application.Interfaces;
 using SHL.Application.Interfaces.GenericRepositoryPattern;
-using SHL.Domain.Models;
-using SHL.Domain.Models.Categories;
 using SHL.Domain.Models.Identity;
 using System.Reflection;
 
@@ -77,14 +73,31 @@ namespace SHL.Repository.Data.Context
         public DbSet<Subscription> Subscriptions { get; set; }
         public DbSet<Token> Tokens { get; set; }
         public DbSet<Wallet> Wallets { get; set; }
-
-
-
         public DbSet<Portfolio> Portfolios { get; set; }
         public DbSet<VestingSchedule> VestingSchedules { get; set; }
         public DbSet<VestingActivation> VestingActivations { get; set; }
         public DbSet<Survey> Surveys { get; set; }
         public DbSet<OptionHolderSignature> OptionHolderSignatures { get; set; }
+        public DbSet<UserVerification> UserVerifications { get; set; }
+
+        #region Dabatase Views:
+        //public DbSet<vwShareHolders> VwShareHolders { get; set; }
+        //public DbSet<vwCautionedAccounts> VwCautionedAccounts { get; set; }
+        //public DbSet<vwT_unitss> VwTUnitsses { get; set; }
+        //public DbSet<vwT_reg> VwTRegs { get; set; }
+        //public DbSet<vwT_reg_name> VwTRegNames { get; set; }
+        //public DbSet<vwDividendPayment> VwDividendPayments { get; set; }
+        //public DbSet<vwBanks> VwBanks { get; set; }
+        //public DbSet<vwTprice> VwTprices { get; set; }
+        //public DbSet<vwUserPrivilege> VwUserPrivileges { get; set; }
+        //public DbSet<vwShareholderAccount> VwShareholderAccounts { get; set; }
+        //public DbSet<vwState> VwStates { get; set; }
+        //public DbSet<vwHolderType> VwHolderTypes { get; set; }
+        //public DbSet<vwDividendPaid> VwDividendPaids { get; set; }
+        //public DbSet<vwDividendType> VwDividendTypes { get; set; }
+        //public DbSet<vwSharePrice> VwSharePrices { get; set; }
+
+        #endregion
 
         //public IGenericRepository<T> GetRepository<T>() where T : class
         //{

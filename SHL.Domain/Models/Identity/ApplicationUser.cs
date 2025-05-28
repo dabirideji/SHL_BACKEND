@@ -18,7 +18,7 @@ namespace SHL.Domain.Models.Identity
         public string? Token { get; set; }
         public string? ApiSessionId { get; set; }
         public string? LastComputerName { get; set; }
-
+        public virtual UserVerification? UserVerification { get; set; }
 
     }
 
