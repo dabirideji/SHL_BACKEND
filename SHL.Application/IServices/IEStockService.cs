@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using CSL.Models.DTO;
+using SHL.Models.DTO;
 
 namespace SHL.Application.IServices
 {
@@ -14,5 +14,6 @@ namespace SHL.Application.IServices
         Task<List<IdTextObj>> GetMyAccountsAsync(string email);
         Task<List<IdTextObj>> GetAllMyAccountsAsync(string email);
         Task<List<IdNameObj>> GetRegistrarsAsync();
+        Task<List<IdNameObj>> GetCompanies();
     }
 }

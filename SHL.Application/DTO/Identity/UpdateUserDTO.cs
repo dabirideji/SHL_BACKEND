@@ -23,4 +23,19 @@ namespace SHL.Application.DTO.Identity
         public DateTime? Dob { get; set; }
 
     }
+    public class UpdateBVNAndNINDTO
+    {
+        public string? BVN { get; set; }
+        public string? NIN { get; set; }
+    }
+    public class UpdateAddressDTO
+    {
+        public int? CountryId { get; set; }
+        public string? Street { get; set; }
+        public int? LgaId { get; set; }
+        public int? StateId { get; set; }
+        public string? ZipCode { get; set; }
+        
+
+    }
 }

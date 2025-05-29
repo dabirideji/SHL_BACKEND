@@ -58,6 +58,43 @@ namespace SHL.Infrastructure.Services
 
             return await userVerificationRepository.UpdateAsync(userVerify);
         }
+        public async Task<UserVerification> UpdateUserAddressAsync(UpdateAddressDTO addressDTO)
+        {
+            var userId = userIdentityService.SubjectId.ToString();
+            var userVerify = userVerificationRepository
+                                .Get()
+                                .FirstOrDefault(x => x.ApplicationUserId == userId);
+            if (userVerify == null)
+            {
+                ApiException.ClientError("User profile not found", 404);
+            }
+            userVerify.StreetAddress = addressDTO.Street;
+            userVerify.CountryId = addressDTO.CountryId;
+            userVerify.StateId = addressDTO.StateId;
+            userVerify.lgaId = addressDTO.LgaId;
+            userVerify.ZipCode = addressDTO.ZipCode;
+            userVerify.DateModified = DateTime.UtcNow;
 
+            return await userVerificationRepository.UpdateAsync(userVerify);
+        }
+        public async Task<UserVerification> UpdateUserBVNAndNINAsync(UpdateBVNAndNINDTO updateBVNAndNINDTO)
+        {
+            var userId = userIdentityService.SubjectId.ToString();
+
+            var userVerify = userVerificationRepository
+                                .Get()
+                                .FirstOrDefault(x => x.ApplicationUserId == userId);
+
+            if (userVerify == null)
+            {
+                ApiException.ClientError("User profile not found", 404);
+            }
+            userVerify.NIN = updateBVNAndNINDTO.NIN;
+            userVerify.BVN = updateBVNAndNINDTO.BVN;
+            userVerify.DateModified = DateTime.UtcNow;
+
+            return await userVerificationRepository.UpdateAsync(userVerify);
+        }
+     
     }
 }

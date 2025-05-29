@@ -43,8 +43,17 @@ namespace SHL.Domain.Models
         public string? InfoUpdateStatus { get; set; }
         public string? Sex { get; set; }
         public DateTime? Dob { get; set; }
+        public string? StreetAddress { get; set; }
+        public int? CountryId { get; set; }
+        public int? StateId { get; set; }
+        public int? lgaId { get; set; }
+        public string? ZipCode { get; set; }
         public DateTime? DateModified { get; set; }
         public virtual ApplicationUser? ApplicationUser { get; set; }
+        public virtual State State { get; set; }
+        public virtual Country Country { get; set; }
+        public virtual Lga Lga { get; set; }
+
     }
 
 }

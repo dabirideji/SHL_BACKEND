@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CSL.Models.DTO
+namespace SHL.Models.DTO
 {
 
     public class BulkUploadSearchParams
@@ -119,8 +119,8 @@ namespace CSL.Models.DTO
     {
         public QueryOptions()
         {
-            pageSize = (start_date.GetValueOrDefault() == default || end_date.GetValueOrDefault() == default)
-                ? (pageSize > 0 ? pageSize : 0)
+            pageSize = start_date.GetValueOrDefault() == default || end_date.GetValueOrDefault() == default
+                ? pageSize > 0 ? pageSize : 0
                 : DefaultValueMaps.pageSize;
         }
 

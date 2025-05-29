@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using SHL.Application.DTO.Identity;
+﻿using SHL.Application.DTO.Identity;
 using SHL.Domain.Models;
 
 namespace SHL.Application.IServices
@@ -13,5 +8,7 @@ namespace SHL.Application.IServices
         Task<UserVerification> GetUserVerificationAsync();
         Task<UserVerification> UpdateUserVerificationAsync(UpdateUserDTO verifyUser);
         Task<UserVerification> AddUserverificationAsync(UserVerification newUserVerification);
+        Task<UserVerification> UpdateUserAddressAsync(UpdateAddressDTO addressDTO);
+        Task<UserVerification> UpdateUserBVNAndNINAsync(UpdateBVNAndNINDTO updateBVNAndNINDTO);
     }
 }

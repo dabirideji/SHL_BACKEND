@@ -39,6 +39,12 @@ namespace SHL.Domain.Models.Maps
             builder.Property(u => u.IsActive).HasDefaultValue(true);
             builder.Property(u => u.IsSynched).HasDefaultValue(false);
 
+            builder.Property(u => u.StateId);
+            builder.Property(u => u.lgaId);
+            builder.Property(u => u.CountryId);
+            builder.Property(u => u.ZipCode).HasDefaultValue(false);
+            builder.Property(u => u.StreetAddress).HasDefaultValue(false);
+
             builder.Property(u => u.DateCreated)
                    .HasDefaultValueSql("GETDATE()");
 
@@ -46,6 +52,20 @@ namespace SHL.Domain.Models.Maps
                    .WithOne(u=>u.UserVerification)
                    .HasForeignKey<UserVerification>(u => u.ApplicationUserId)
                    .OnDelete(DeleteBehavior.Restrict);
+
+            builder.HasOne(p => p.State)
+            .WithMany(p => p.UserVerifications)
+            .HasForeignKey(p => p.StateId);
+
+            builder.HasOne(p => p.Lga)
+             .WithMany(p => p.UserVerifications)
+             .HasForeignKey(p => p.lgaId);
+
+            builder.HasOne(p => p.Country)
+           .WithMany(p => p.UserVerifications)
+           .HasForeignKey(p => p.lgaId);
+
+
         }
     }
 }
