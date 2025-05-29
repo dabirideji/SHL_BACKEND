@@ -15,5 +15,6 @@ namespace SHL.Application.IServices
         Task<List<IdTextObj>> GetAllMyAccountsAsync(string email);
         Task<List<IdNameObj>> GetRegistrarsAsync();
         Task<List<IdNameObj>> GetCompanies();
+        Task<List<IdNameObj>> GetBusinessCategory();
     }
 }

@@ -20,5 +20,11 @@ namespace SHL.IdentityServer.Api.Controllers
             var result=await eStockService.GetCompanies();
             return Ok(result);
         }
+        [HttpGet("GetBusinessCategory")]
+        public async Task<IActionResult> GetBusinessCategory()
+        {
+            var result = await eStockService.GetBusinessCategory();
+            return Ok(result);
+        }
     }
 }
