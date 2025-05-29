@@ -1,17 +1,9 @@
 ﻿using Dapper;
-using CSL.Application.Utils.DTO;
-using CSL.Models.DTO;
-using Dapper;
-using ExcelDataReader.Log;
 using Microsoft.Extensions.Logging;
-using SHL.Application.DTO.ShareHoder;
 using SHL.Application.Constants;
-using SHL.Domain.Models;
-using System.Data;
-using Microsoft.Extensions.Configuration;
 using SHL.Application.IServices;
-using System;
 using SHL.Application.DTO.ViewDto;
+using SHL.Models.DTO;
 
 namespace SHL.Infrastructure.Services
 {
@@ -19,14 +11,10 @@ namespace SHL.Infrastructure.Services
     {
         private readonly ILogger<EStockService> logger;
         private readonly IDapper _dapper;
-        private readonly IConfiguration configuration;
-        private readonly string _connectionString;
-        public EStockService(ILogger<EStockService> logger, IDapper dapper,IConfiguration configuration)
+        public EStockService(ILogger<EStockService> logger, IDapper dapper)
         {
             this.logger = logger;
             _dapper = dapper;
-            this.configuration = configuration;
-            _connectionString = configuration.GetConnectionString("DefaultConnection");
         }
         public async Task<List<IdNameObj>> GetEquityRegistrarsAsync()
         {
@@ -143,7 +131,20 @@ namespace SHL.Infrastructure.Services
                 return null;
             }
         }
+        public async Task<List<IdNameObj>> GetCompanies()
+        {
+            try
+            {
+                var parameters = new DynamicParameters();
+                var result = await _dapper.GetAllAsync<IdNameObj>("[dbo].[fetchEquityCompanies]",parameters);
+                return result;
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "Error fetching companies");
+                return null;
+            }
+        }
 
-        
     }
 }

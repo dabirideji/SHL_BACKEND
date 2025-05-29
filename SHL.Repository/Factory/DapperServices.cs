@@ -19,7 +19,7 @@ namespace SHL.Repository.Factory
         public DapperServices(IConfiguration configuration)
         {
             _configuration = configuration;
-            _connectionString = _configuration.GetConnectionString("DefaultConnection");
+            _connectionString = _configuration.GetConnectionString("EstockConnection");
         }
 
         public void Dispose()
@@ -27,45 +27,34 @@ namespace SHL.Repository.Factory
 
         }
 
-        public DbConnection GetDbconnection(string? connectionString = null)
+        public IDbConnection GetDbconnection()
         {
-            if (string.IsNullOrEmpty(connectionString))
-            {
-                connectionString = _connectionString;
-            }
-            return new SqlConnection(_configuration.GetConnectionString(connectionString));
+            return new SqlConnection(_connectionString);
         }
+
 
         public async Task<T> GetAsync<T>(string procedureName, DynamicParameters parameters, CommandType commandType = CommandType.StoredProcedure, string? connectionString = null)
         {
-            using IDbConnection db = GetDbconnection(connectionString);
+            using var db= GetDbconnection();
 
             return await db.QuerySingleOrDefaultAsync<T>(procedureName, parameters, commandType: commandType).ConfigureAwait(false);
         }
         public async Task<List<T>> GetAllAsync<T>(string procedureName, DynamicParameters? parameters = null, CommandType commandType = CommandType.StoredProcedure, string? connectionString = null, int? connectionTimeout = null)
         {
-            try
-            {
-                using var dbConnection = GetDbconnection(connectionString);
-                var result = await dbConnection.QueryAsync<T>(procedureName, parameters, commandTimeout: connectionTimeout, commandType: commandType).ConfigureAwait(false);
-                return result.ToList();
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-
+            using var dbConnection = GetDbconnection(); // No need to pass connectionString here again
+            var result = await dbConnection.QueryAsync<T>(procedureName, parameters, commandTimeout: connectionTimeout, commandType: commandType);
+            return result.ToList();
         }
 
         public async Task<GridReader> GetMultipleResultAsync(string procedureName, DynamicParameters parameters, CommandType commandType = CommandType.StoredProcedure, string? connectionString = null)
         {
-            using IDbConnection db = GetDbconnection(connectionString);
+            using var db = GetDbconnection();
             return await db.QueryMultipleAsync(procedureName, parameters, commandType: commandType).ConfigureAwait(false);
         }
         public async Task<int> QuerySingleAsync(string procedureName, DynamicParameters parameters, CommandType commandType = CommandType.StoredProcedure, string connectionString = null)
         {
             int result;
-            using IDbConnection db = GetDbconnection(connectionString);
+            using var db = GetDbconnection();
             if (db.State == ConnectionState.Closed)
                 db.Open();
 
@@ -87,7 +76,7 @@ namespace SHL.Repository.Factory
         public async Task<T> QuerySingleAsync1<T>(string procedureName, DynamicParameters parameters, CommandType commandType = CommandType.StoredProcedure, string connectionString = null)
         {
             T result;
-            using IDbConnection db = GetDbconnection(connectionString);
+            using var db = GetDbconnection();
             if (db.State == ConnectionState.Closed)
                 db.Open();
 
@@ -107,32 +96,32 @@ namespace SHL.Repository.Factory
             return result;
         }
 
-        public async Task<T> QuerySingleAsync<T>(string procedureName, DynamicParameters parameters, CommandType commandType = CommandType.StoredProcedure, string connectionString = null)
-        {
-            using var dbConnection = GetDbconnection(connectionString);
-            await dbConnection.OpenAsync();
+        //public async Task<T> QuerySingleAsync<T>(string procedureName, DynamicParameters parameters, CommandType commandType = CommandType.StoredProcedure, string connectionString = null)
+        //{
+        //    using var db = GetDbconnection();
+        //    await db.OpenAsync();
 
-            using var transaction = await dbConnection.BeginTransactionAsync();
+        //   // using var transaction = await db.BeginTransactionAsync();
 
-            try
-            {
-                var result = await dbConnection.QuerySingleAsync<T>(procedureName, parameters, commandType: commandType, transaction: transaction).ConfigureAwait(false);
-                await transaction.CommitAsync();
+        //    try
+        //    {
+        //        var result = await db.QuerySingleAsync<T>(procedureName, parameters, commandType: commandType).ConfigureAwait(false);
+        //        await transaction.CommitAsync();
 
-                return result;
-            }
-            catch (Exception ex)
-            {
-                await transaction.RollbackAsync();
-                throw ex;
-            }
-        }
+        //        return result;
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        await transaction.RollbackAsync();
+        //        throw ex;
+        //    }
+        //}
 
 
         public async Task<T> QueryFirstOrDefaultAsync<T>(string procedureName, DynamicParameters parameters, CommandType commandType = CommandType.StoredProcedure, string connectionString = null)
         {
             T result;
-            using IDbConnection db = GetDbconnection(connectionString);
+            using var db = GetDbconnection();
             if (db.State == ConnectionState.Closed)
                 db.Open();
 
@@ -153,17 +142,17 @@ namespace SHL.Repository.Factory
 
         public async Task<int> ExecuteAsync(string procedureName, DynamicParameters parameters = null, CommandType commandType = CommandType.StoredProcedure, string connectionString = null)
         {
-            using var dbConnection = GetDbconnection(connectionString);
+            using var db = GetDbconnection();
 
-            if (dbConnection.State == ConnectionState.Closed)
-                dbConnection.Open();
+            if (db.State == ConnectionState.Closed)
+                db.Open();
 
             int result;
-            using var tran = dbConnection.BeginTransaction();
+            using var tran = db.BeginTransaction();
 
             try
             {
-                result = await dbConnection.ExecuteAsync(procedureName, parameters, commandType: commandType, transaction: tran).ConfigureAwait(false);
+                result = await db.ExecuteAsync(procedureName, parameters, commandType: commandType, transaction: tran).ConfigureAwait(false);
                 tran.Commit();
                 return result;
             }
@@ -178,7 +167,7 @@ namespace SHL.Repository.Factory
         public async Task ExecuteMultipleAsync(string procedureName, List<DynamicParameters> parameters, CommandType commandType = CommandType.StoredProcedure, string connectionString = null)
         {
 
-            using IDbConnection db = GetDbconnection(connectionString);
+            using var db = GetDbconnection();
             if (db.State == ConnectionState.Closed)
                 db.Open();
 
@@ -215,7 +204,7 @@ namespace SHL.Repository.Factory
         public int BulkInsert<T>(List<DynamicParameters> parms, string connecString = null)
         {
             int result;
-            using (IDbConnection db = GetDbconnection(connecString))
+            using (IDbConnection db = GetDbconnection())
             {
                 if (db.State == ConnectionState.Closed)
                     db.Open();
@@ -237,6 +226,16 @@ namespace SHL.Repository.Factory
                     throw new Exception(ex.InnerException?.Message ?? ex.Message);
                 }
             }
+        }
+
+        public DbConnection GetDbconnection(string? connectionString = null)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<T> QuerySingleAsync<T>(string procedureName, DynamicParameters parameters, CommandType commandType = CommandType.StoredProcedure, string? connectionString = null)
+        {
+            throw new NotImplementedException();
         }
     }
 }

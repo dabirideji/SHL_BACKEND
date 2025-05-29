@@ -17,6 +17,9 @@ public static class RepositoryExtensions
         services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
         services.AddScoped<IShareholderRepository, ShareholderRepository>();
         services.AddScoped<IUserVerificationRepository, UserVerificationRepository>();
+        services.AddScoped<IStateRepository, StateRepository>();
+        services.AddScoped<ILgaRepository, LgaRepository>();
+        services.AddScoped<ICountryRepository, CountryRepository>();
         return services;
     }
 }

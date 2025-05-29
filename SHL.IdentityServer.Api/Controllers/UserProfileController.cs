@@ -19,10 +19,16 @@ namespace SHL.IdentityServer.Api.Controllers
             this.userVerificationService = userVerificationService;
         }
         
-        [HttpPut("UpdateUser")]
-        public async ValueTask<IActionResult> UpdateUser([FromBody] UpdateUserDTO userDTO)
+        [HttpPut("UpdateAddress")]
+        public async ValueTask<IActionResult> UpdateUser([FromBody] UpdateAddressDTO userDTO)
         {
-            var result = await userVerificationService.UpdateUserVerificationAsync(userDTO);
+            var result = await userVerificationService.UpdateUserAddressAsync(userDTO);
+            return Ok(result);
+        }
+        [HttpPut("UpdateBVNAndNIN")]
+        public async ValueTask<IActionResult> UpdateBVNAndNIN([FromBody] UpdateBVNAndNINDTO userDTO)
+        {
+            var result = await userVerificationService.UpdateUserBVNAndNINAsync(userDTO);
             return Ok(result);
         }
         [HttpGet("GetUserProfile")]
