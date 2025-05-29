@@ -145,6 +145,16 @@ namespace SHL.Infrastructure.Services
                 return null;
             }
         }
+        public async Task<List<IdNameObj>> GetBusinessCategory()
+        {
+            return await Task.FromResult(new List<IdNameObj>
+            {
+                new IdNameObj { Id = 1, Name = "Finance" },
+                new IdNameObj { Id = 2, Name = "IT" },
+                new IdNameObj { Id = 3, Name = "Communication" },
+                new IdNameObj { Id = 4, Name = "Real Estate" }
+            });
+        }
 
     }
 }
